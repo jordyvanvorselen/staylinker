@@ -1,8 +1,6 @@
 'use client';
 
 import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import ThemeToggle from './ThemeToggle';
-import Header from './Header';
 
 type ThemeContextType = {
   theme: string;
