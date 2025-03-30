@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { Stay } from '../../types';
 import StayCard from './StayCard';
 import StayDistance from './StayDistance';
+import AddStayPrompt from './AddStayPrompt';
+import { Plus } from 'lucide-react';
 
 const StayList = () => {
   const [stays, setStays] = useState<Stay[]>([]);
@@ -63,17 +65,24 @@ const StayList = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Stays</h2>
       {stays.length === 0 ? (
         <div className="card bg-base-100 shadow p-6 text-center">
           <h3 className="font-medium text-lg mb-2">No stays found</h3>
           <p className="text-gray-600">Plan your first trip by adding a stay!</p>
-          <div className="mt-4">
-            <button className="btn btn-primary">Add Stay</button>
+          <div className="mt-4 flex justify-center">
+            <button 
+              className="flex items-center justify-center bg-primary text-primary-content rounded-full p-3 shadow-sm hover:shadow-md transition-all duration-200"
+              aria-label="Add a new stay"
+              role="button"
+              onClick={() => console.log('Add new stay clicked')}
+            >
+              <Plus className="h-6 w-6" />
+            </button>
           </div>
         </div>
       ) : (
         <div className="flex flex-col w-full max-w-3xl mx-auto">
+          {/* Display all stays with distances between them */}
           {stays.map((stay, index) => (
             <div key={stay.id} className="mb-2">
               <StayCard stay={stay} onClick={handleStayClick} />
@@ -84,6 +93,11 @@ const StayList = () => {
               )}
             </div>
           ))}
+          
+          {/* Add the 'Add New Stay' prompt at the end of the timeline */}
+          <div className="mb-2">
+            <AddStayPrompt onClick={() => console.log('Add new stay from timeline end')} />
+          </div>
         </div>
       )}
     </div>

@@ -71,26 +71,21 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
         </div>
 
         {stay.notes && (
-          <div className="mt-4">
-            <div className="bg-base-200 p-3 rounded-lg">
-              <h3 className="text-sm font-semibold mb-1">Notes</h3>
-              <div>
-                <p className={`text-sm ${isExpanded ? '' : 'line-clamp-2'}`}>{stay.notes}</p>
-                {stay.notes.length > 80 && (
-                  <button
-                    className="text-xs text-accent hover:text-accent-focus mt-1"
-                    onClick={e => {
-                      e.stopPropagation();
-                      setIsExpanded(!isExpanded);
-                    }}
-                    aria-expanded={isExpanded}
-                    aria-controls="notes-content"
-                  >
-                    {isExpanded ? 'Show less' : 'Show more'}
-                  </button>
-                )}
-              </div>
-            </div>
+          <div className="mt-4 px-2">
+            <p className={`text-xs text-gray-500 italic ${isExpanded ? '' : 'line-clamp-2'}`}>{stay.notes}</p>
+            {stay.notes.length > 80 && (
+              <button
+                className="text-xs text-accent hover:text-accent-focus mt-1"
+                onClick={e => {
+                  e.stopPropagation();
+                  setIsExpanded(!isExpanded);
+                }}
+                aria-expanded={isExpanded}
+                aria-controls="notes-content"
+              >
+                {isExpanded ? 'Show less' : 'Show more'}
+              </button>
+            )}
           </div>
         )}
       </div>
