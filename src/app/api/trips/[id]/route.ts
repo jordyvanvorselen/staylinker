@@ -1,9 +1,17 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 // GET a specific trip by ID
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+    // Get the user's session token
+    const token = await getToken({ req: request });
+    
+    if (!token || !token.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
     const trip = await prisma.trip.findUnique({
       where: { id: params.id },
       include: {
@@ -13,6 +21,11 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
 
     if (!trip) {
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
+    }
+    
+    // Ensure the user owns this trip
+    if (trip.userId !== token.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     return NextResponse.json(trip);
@@ -24,6 +37,13 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
 // PUT update a trip
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+    // Get the user's session token
+    const token = await getToken({ req: request });
+    
+    if (!token || !token.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
     const data = await request.json();
 
     // Check if trip exists
@@ -33,6 +53,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     if (!existingTrip) {
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
+    }
+    
+    // Ensure the user owns this trip
+    if (existingTrip.userId !== token.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     // Update the trip
@@ -51,8 +76,15 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE a trip
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+    // Get the user's session token
+    const token = await getToken({ req: request });
+    
+    if (!token || !token.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
     // Check if trip exists
     const existingTrip = await prisma.trip.findUnique({
       where: { id: params.id },
@@ -60,6 +92,11 @@ export async function DELETE(_request: NextRequest, { params }: { params: { id: 
 
     if (!existingTrip) {
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
+    }
+    
+    // Ensure the user owns this trip
+    if (existingTrip.userId !== token.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     // Delete the trip (will cascade delete all related stays)

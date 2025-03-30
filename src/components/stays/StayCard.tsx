@@ -38,7 +38,7 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
 
   return (
     <div
-      className="card bg-base-200/30 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden rounded-xl ring-1 ring-base-300 hover:ring-primary/30 hover:translate-y-[-2px]"
+      className="card bg-base-200/30 shadow-md hover:shadow-xl active:shadow-sm transition-all duration-300 cursor-pointer overflow-hidden rounded-xl ring-1 ring-base-300 hover:ring-primary/30 active:ring-primary/50 hover:translate-y-[-2px] active:translate-y-[1px] focus:outline-none focus:ring-2 focus:ring-primary/40"
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
