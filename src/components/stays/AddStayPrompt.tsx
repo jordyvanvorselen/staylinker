@@ -14,7 +14,7 @@ const AddStayPrompt = ({ onClick }: AddStayPromptProps) => {
       onClick();
     } else {
       // Default action if no callback provided
-      console.log('Add a new stay prompted');
+      // Handle adding a new stay
     }
   };
 

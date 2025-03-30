@@ -25,7 +25,7 @@ const GapIndicator = ({ gapInDays, onClick }: GapIndicatorProps) => {
       onClick(e);
     } else {
       // Default action if no callback provided
-      console.log('Add a new stay in the gap');
+      // Handle adding a new stay in the gap
     }
   };
 

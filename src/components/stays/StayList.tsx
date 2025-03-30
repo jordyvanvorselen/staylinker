@@ -41,9 +41,9 @@ const StayList = () => {
     fetchStays();
   }, []);
 
-  const handleStayClick = (stay: Stay) => {
+  const handleStayClick = (_stay: Stay) => {
     // Will implement selected stay functionality in a future update
-    console.log('Stay clicked:', stay.id);
+    // Handle stay click event
     // Functionality for opening a modal or navigating to a detail page will be added here
   };
 
@@ -74,7 +74,7 @@ const StayList = () => {
               className="flex items-center justify-center bg-primary text-primary-content rounded-full p-3 shadow-sm hover:shadow-md transition-all duration-200"
               aria-label="Add a new stay"
               role="button"
-              onClick={() => console.log('Add new stay clicked')}
+              onClick={() => {}}
             >
               <Plus className="h-6 w-6" />
             </button>
@@ -96,7 +96,7 @@ const StayList = () => {
           
           {/* Add the 'Add New Stay' prompt at the end of the timeline */}
           <div className="mb-2">
-            <AddStayPrompt onClick={() => console.log('Add new stay from timeline end')} />
+            <AddStayPrompt onClick={() => {}} />
           </div>
         </div>
       )}

@@ -82,7 +82,7 @@ const StayDistance = ({ originStay, destinationStay }: StayDistanceProps) => {
     const handleGapClick = (e: React.MouseEvent | React.KeyboardEvent) => {
       e.stopPropagation();
       // Functionality will be added later
-      console.log('Add a new stay in the gap between', originStay.location, 'and', destinationStay.location);
+      // Handle adding a new stay in the gap
     };
 
     return <GapIndicator gapInDays={gapInDays} onClick={handleGapClick} />;
