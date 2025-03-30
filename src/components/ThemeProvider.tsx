@@ -2,6 +2,7 @@
 
 import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import ThemeToggle from './ThemeToggle';
+import Header from './Header';
 
 type ThemeContextType = {
   theme: string;
@@ -34,9 +35,6 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <div className="fixed top-4 right-4 z-50">
-        <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-      </div>
       {children}
     </ThemeContext.Provider>
   );
