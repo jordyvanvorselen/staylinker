@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Stay } from '../../types';
-import { ArrowRight, ExternalLink } from 'lucide-react';
+import { CarFront, ExternalLink } from 'lucide-react';
 import DashedConnector from '../ui/DashedConnector';
 import GapIndicator from './GapIndicator';
 
@@ -136,7 +136,7 @@ const StayDistance = ({ originStay, destinationStay }: StayDistanceProps) => {
         aria-label={`View route from ${originStay.location} to ${destinationStay.location} on Google Maps`}
         role="link"
       >
-        <ArrowRight className="h-5 w-5 text-primary" />
+        <CarFront className="h-5 w-5 text-primary" />
         <div className="flex flex-col">
           <div className="flex items-center gap-1">
             <span className="text-sm font-medium">{distanceData.distance}</span>
