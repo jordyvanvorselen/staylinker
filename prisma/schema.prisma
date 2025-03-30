@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Trip {
+  id          String   @id @default(uuid())
+  name        String
+  description String?  // Optional description
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  stays       Stay[]   // One Trip can have multiple Stays
+}
+
+model Stay {
+  id             String   @id @default(uuid())
+  location       String   // City/village name
+  address        String
+  arrivalDate    DateTime // Store as DateTime
+  departureDate  DateTime // Store as DateTime
+  notes          String?  // Optional field for general information
+  arrivalNotes   String?  // Optional notes specific to arrival
+  departureNotes String?  // Optional notes specific to departure
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  // Relationship to Trip
+  trip           Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripId         String
+}

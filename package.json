@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@prisma/client": "^6.5.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -28,6 +29,7 @@
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.5",
     "prettier": "^3.5.3",
+    "prisma": "^6.5.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
