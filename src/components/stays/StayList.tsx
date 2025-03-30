@@ -9,24 +9,24 @@ const StayList = () => {
   const [stays, setStays] = useState<Stay[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedStay, setSelectedStay] = useState<Stay | null>(null);
+  // State for selected stay will be implemented when detail functionality is added
 
   const fetchStays = async () => {
     try {
       setIsLoading(true);
       const response = await fetch('/api/stays');
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch stays');
       }
-      
+
       const data = await response.json();
-      
+
       // Sort stays by arrival date
-      const sortedStays = [...data].sort((a, b) => 
-        new Date(a.arrivalDate).getTime() - new Date(b.arrivalDate).getTime()
+      const sortedStays = [...data].sort(
+        (a, b) => new Date(a.arrivalDate).getTime() - new Date(b.arrivalDate).getTime(),
       );
-      
+
       setStays(sortedStays);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -40,8 +40,9 @@ const StayList = () => {
   }, []);
 
   const handleStayClick = (stay: Stay) => {
-    setSelectedStay(stay);
-    // You can implement additional functionality here, such as opening a modal or navigating to a detail page
+    // Will implement selected stay functionality in a future update
+    console.log('Stay clicked:', stay.id);
+    // Functionality for opening a modal or navigating to a detail page will be added here
   };
 
   if (isLoading) {
@@ -75,17 +76,11 @@ const StayList = () => {
         <div className="flex flex-col w-full max-w-3xl mx-auto">
           {stays.map((stay, index) => (
             <div key={stay.id} className="mb-2">
-              <StayCard 
-                stay={stay} 
-                onClick={handleStayClick}
-              />
-              
+              <StayCard stay={stay} onClick={handleStayClick} />
+
               {/* Show distance to next stay if there is one */}
               {index < stays.length - 1 && stays[index + 1] && (
-                <StayDistance 
-                  originStay={stay} 
-                  destinationStay={stays[index + 1]!} 
-                />
+                <StayDistance originStay={stay} destinationStay={stays[index + 1]!} />
               )}
             </div>
           ))}

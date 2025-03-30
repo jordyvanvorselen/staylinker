@@ -12,7 +12,7 @@ interface StayCardProps {
 
 const StayCard = ({ stay, onClick }: StayCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   const handleClick = () => {
     if (onClick) {
       onClick(stay);
@@ -32,12 +32,12 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
   };
 
   const dayCount = Math.ceil(
-    (new Date(stay.departureDate).getTime() - new Date(stay.arrivalDate).getTime()) / 
-    (1000 * 60 * 60 * 24)
+    (new Date(stay.departureDate).getTime() - new Date(stay.arrivalDate).getTime()) /
+      (1000 * 60 * 60 * 24),
   );
 
   return (
-    <div 
+    <div
       className="card bg-base-200/30 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden rounded-xl ring-1 ring-base-300 hover:ring-primary/30"
       onClick={handleClick}
       onKeyDown={handleKeyDown}
@@ -52,22 +52,24 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
           <Calendar className="h-4 w-4 text-accent" />
           <span className="font-medium text-md">{formatDate(stay.arrivalDate)}</span>
         </div>
-        
+
         {stay.arrivalNotes && (
           <div className="mt-2 w-full px-2">
             <p className="text-xs text-left text-gray-500 italic">{stay.arrivalNotes}</p>
           </div>
         )}
       </div>
-      
+
       {/* Main Content */}
       <div className="card-body p-6 bg-base-200/10">
         <div className="flex flex-col items-center mb-3">
           <h2 className="card-title text-xl font-bold text-center mb-1">{stay.location}</h2>
           <p className="text-sm text-gray-600 text-center">{stay.address}</p>
-          <div className="badge badge-primary badge-lg mt-3 opacity-80">{dayCount} {dayCount === 1 ? 'day' : 'days'}</div>
+          <div className="badge badge-primary badge-lg mt-3 opacity-80">
+            {dayCount} {dayCount === 1 ? 'day' : 'days'}
+          </div>
         </div>
-        
+
         {stay.notes && (
           <div className="mt-4">
             <div className="bg-base-200 p-3 rounded-lg">
@@ -75,9 +77,9 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
               <div>
                 <p className={`text-sm ${isExpanded ? '' : 'line-clamp-2'}`}>{stay.notes}</p>
                 {stay.notes.length > 80 && (
-                  <button 
+                  <button
                     className="text-xs text-accent hover:text-accent-focus mt-1"
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       setIsExpanded(!isExpanded);
                     }}
@@ -92,7 +94,7 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
           </div>
         )}
       </div>
-      
+
       {/* Departure Section at Bottom */}
       <div className="bg-gradient-to-tr from-primary/20 via-primary/5 to-base-200/30 py-3 px-6 flex flex-col items-center border-t border-base-300/20">
         <span className="text-xs uppercase tracking-wider text-gray-500 mb-1">Departure</span>
@@ -100,7 +102,7 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
           <Calendar className="h-4 w-4 text-primary" />
           <span className="font-medium text-md">{formatDate(stay.departureDate)}</span>
         </div>
-        
+
         {stay.departureNotes && (
           <div className="mt-2 w-full px-2">
             <p className="text-xs text-left text-gray-500 italic">{stay.departureNotes}</p>

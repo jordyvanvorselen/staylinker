@@ -16,7 +16,7 @@ export const useTheme = () => useContext(ThemeContext);
 
 export default function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState('dark');
-  
+
   // Initialize theme from localStorage when component mounts
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme') || 'dark';
@@ -31,9 +31,5 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
 }

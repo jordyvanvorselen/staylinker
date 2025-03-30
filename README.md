@@ -1,7 +1,9 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+
 <a id="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
+
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -59,6 +61,7 @@
 </details>
 
 <!-- ABOUT THE PROJECT -->
+
 ## About The Project
 
 [![StayLinker Screenshot][product-screenshot]](https://staylinker.example.com)
@@ -66,86 +69,98 @@
 StayLinker is a personal travel planning tool designed to help you organize and manage your stays. Whether you're a frequent traveler, digital nomad, or someone planning multiple accommodations, StayLinker helps you track the logistics between stays and keep important notes about your accommodations.
 
 Key Features:
-* Organize and visualize your upcoming stays in one place
-* Calculate and track travel times between accommodations
-* Keep detailed notes about each stay (contact info, access codes, amenities)
-* Plan your travel itinerary efficiently
-* Identify gaps or overlaps in your accommodation schedule
+
+- Organize and visualize your upcoming stays in one place
+- Calculate and track travel times between accommodations
+- Keep detailed notes about each stay (contact info, access codes, amenities)
+- Plan your travel itinerary efficiently
+- Identify gaps or overlaps in your accommodation schedule
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 
-* [![Next.js][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![TypeScript][TypeScript]][TypeScript-url]
-* [![TailwindCSS][TailwindCSS]][TailwindCSS-url]
-* [![DaisyUI][DaisyUI]][DaisyUI-url]
+- [![Next.js][Next.js]][Next-url]
+- [![React][React.js]][React-url]
+- [![TypeScript][TypeScript]][TypeScript-url]
+- [![TailwindCSS][TailwindCSS]][TailwindCSS-url]
+- [![DaisyUI][DaisyUI]][DaisyUI-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
+
 ## Getting Started
 
 To get a local copy up and running, follow these simple steps:
 
 ### Prerequisites
 
-* [asdf version manager](https://asdf-vm.com/) for installing Node.js
+- [asdf version manager](https://asdf-vm.com/) for installing Node.js
 
 ### Installation
 
 1. Clone the repository
+
    ```sh
    git clone https://github.com/jordyvanvorselen/staylinker.git
    ```
 
 2. Install Node.js using asdf
+
    ```sh
    cd staylinker
    asdf install
    ```
 
 3. Install NPM packages
+
    ```sh
    npm install
    ```
 
-3. Start the development server
+4. Start the development server
+
    ```sh
    npm run dev
    ```
+
    This will start the application in development mode with Turbopack for faster builds.
 
-4. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+5. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
+
 ## Usage
 
 StayLinker offers a range of features to enhance your travel planning experience:
 
 ### Stay Management
-* Add and organize your upcoming stays with dates, locations, and details
-* Visualize your entire travel schedule on an intuitive timeline
-* Receive alerts for scheduling conflicts or tight connections
+
+- Add and organize your upcoming stays with dates, locations, and details
+- Visualize your entire travel schedule on an intuitive timeline
+- Receive alerts for scheduling conflicts or tight connections
 
 ### Travel Planning
-* Calculate and track travel times between accommodations
-* Plan the most efficient routes between stays
-* Keep track of transportation options and costs
+
+- Calculate and track travel times between accommodations
+- Plan the most efficient routes between stays
+- Keep track of transportation options and costs
 
 ### Notes and Information
-* Store important details about each accommodation
-* Save contact information, check-in/out times, and access instructions
-* Attach photos and documents related to your stays
+
+- Store important details about each accommodation
+- Save contact information, check-in/out times, and access instructions
+- Attach photos and documents related to your stays
 
 _For more examples and detailed instructions, please refer to the [Documentation](https://github.com/jordyvanvorselen/staylinker/wiki)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
+
 ## Roadmap
 
 - [ ] Integration with mapping services for better travel time estimation
@@ -153,15 +168,16 @@ _For more examples and detailed instructions, please refer to the [Documentation
 - [ ] Calendar synchronization with your personal calendar
 - [ ] Export/import functionality for sharing travel plans
 - [ ] Integration with travel services
-    - [ ] Flight booking information
-    - [ ] Car rental tracking
-    - [ ] Public transportation options
+  - [ ] Flight booking information
+  - [ ] Car rental tracking
+  - [ ] Public transportation options
 
 See the [open issues](https://github.com/jordyvanvorselen/staylinker/issues) for a full list of proposed features and known issues.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
@@ -184,6 +200,7 @@ Don't forget to give the project a star! Thanks again!
 </a>
 
 <!-- LICENSE -->
+
 ## License
 
 Distributed under the GNU General Public License v3.0. See `LICENSE` for more information.
@@ -191,6 +208,7 @@ Distributed under the GNU General Public License v3.0. See `LICENSE` for more in
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTACT -->
+
 ## Contact
 
 Jordy van Vorselen - [@jordyvorselen](https://twitter.com/jordyvorselen) - jordy@example.com
@@ -200,17 +218,19 @@ Project Link: [https://github.com/jordyvanvorselen/staylinker](https://github.co
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->
+
 ## Acknowledgments
 
-* [Next.js Documentation](https://nextjs.org/docs)
-* [TailwindCSS Documentation](https://tailwindcss.com/docs)
-* [DaisyUI Components](https://daisyui.com/components/)
-* [Lucide React Icons](https://lucide.dev/icons/)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [TailwindCSS Documentation](https://tailwindcss.com/docs)
+- [DaisyUI Components](https://daisyui.com/components/)
+- [Lucide React Icons](https://lucide.dev/icons/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/jordyvanvorselen/staylinker.svg?style=for-the-badge
 [contributors-url]: https://github.com/jordyvanvorselen/staylinker/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/jordyvanvorselen/staylinker.svg?style=for-the-badge

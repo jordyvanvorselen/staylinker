@@ -13,7 +13,7 @@ const config: Config = {
   plugins: [daisyui],
   // @ts-ignore - DaisyUI custom config is not in the Tailwind types
   daisyui: {
-    themes: ["dark", "light", "cupcake"],
+    themes: ['dark', 'light', 'cupcake'],
   },
 };
 
