@@ -8,6 +8,7 @@ import Link from 'next/link';
 import StayCard from '@/components/stays/StayCard';
 import StayDistance from '@/components/stays/StayDistance';
 import AddStayPrompt from '@/components/trips/AddStayPrompt';
+import InviteUserForm from '@/components/trips/InviteUserForm';
 
 export default function TripDetailPage() {
   const params = useParams();
@@ -86,7 +87,7 @@ export default function TripDetailPage() {
   return (
     <div className="container mx-auto p-4">
       {/* Header with back button */}
-      <div className="mb-6">
+      <div className="flex justify-between items-center mb-6">
         <Link 
           href="/"
           className="btn btn-ghost btn-sm gap-2 hover:bg-base-200 active:bg-base-300 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-base-300"
@@ -95,6 +96,19 @@ export default function TripDetailPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to Trips
         </Link>
+        
+        <div className="flex items-center gap-2">
+          <InviteUserForm tripId={tripId} />
+          
+          <Link 
+            href={`/trips/${tripId}/stays/new`}
+            className="btn btn-primary btn-sm"
+            aria-label="Add a new stay"
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            Add Stay
+          </Link>
+        </div>
       </div>
       
       {(!trip.stays || trip.stays.length === 0) ? (

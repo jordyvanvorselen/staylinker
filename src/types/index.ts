@@ -12,12 +12,25 @@ export interface Stay {
   updatedAt?: string;
 }
 
+export interface User {
+  id: string;
+  name?: string;
+  email?: string;
+  image?: string;
+}
+
+export interface TripUser {
+  user: User;
+}
+
 export interface Trip {
   id: string;
   name: string;
   description?: string;
   createdAt: string;
   updatedAt: string;
-  userId: string;
+  ownerId: string;
+  owner?: User;
+  users?: TripUser[]; // Users who have access to this trip
   stays?: Stay[]; // A trip can have multiple stays
 }

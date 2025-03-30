@@ -1,18 +1,42 @@
 'use client';
 
-import { Link as LucideLink, User, LogOut, LogIn, Menu, X } from 'lucide-react';
+import { Link as LucideLink, User, LogOut, LogIn, Menu, X, Bell } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from './ThemeProvider';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import NotificationBadge from './ui/NotificationBadge';
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [inviteCount, setInviteCount] = useState(0);
   const isAuthenticated = !!session?.user;
   const loading = status === 'loading';
+
+  // Fetch pending invitations when the user is authenticated
+  useEffect(() => {
+    const fetchInvitations = async () => {
+      if (isAuthenticated) {
+        try {
+          const response = await fetch('/api/invitations');
+          if (response.ok) {
+            const invitations = await response.json();
+            setInviteCount(invitations.length);
+          }
+        } catch (error) {
+          console.error('Error fetching invitations:', error);
+        }
+      }
+    };
+
+    fetchInvitations();
+    // Poll for new invitations every 60 seconds
+    const intervalId = setInterval(fetchInvitations, 60000);
+    return () => clearInterval(intervalId);
+  }, [isAuthenticated]);
 
   const handleSignOut = async () => {
     setMenuOpen(false); // Close drawer before signing out
@@ -53,15 +77,18 @@ const Header = () => {
               {loading ? (
                 <div className="w-5 h-5 rounded-full border-2 border-t-transparent border-primary animate-spin"></div>
               ) : isAuthenticated ? (
-                session.user.image ? (
-                  <img
-                    src={session.user.image}
-                    alt={session.user.name || 'User profile'}
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  <User className="h-5 w-5" />
-                )
+                <div className="relative">
+                  {inviteCount > 0 && <NotificationBadge count={inviteCount} position="top-right" size="sm" />}
+                  {session.user.image ? (
+                    <img
+                      src={session.user.image}
+                      alt={session.user.name || 'User profile'}
+                      className="w-8 h-8 rounded-full"
+                    />
+                  ) : (
+                    <User className="h-5 w-5" />
+                  )}
+                </div>
               ) : (
                 <Menu className="h-5 w-5" />
               )}
@@ -116,6 +143,20 @@ const Header = () => {
                 
                 {/* Menu items */}
                 <ul className="menu p-4 w-full">
+                  <li>
+                    <Link 
+                      href="/invitations"
+                      className="flex items-center gap-3 relative"
+                      aria-label="View invitations"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <Bell className="h-5 w-5" />
+                      <span>Invites</span>
+                      {inviteCount > 0 && (
+                        <div className="flex items-center justify-center h-5 w-5 bg-error text-error-content text-xs font-medium rounded-full ml-2">{inviteCount}</div>
+                      )}
+                    </Link>
+                  </li>
                   <li>
                     <button 
                       onClick={handleSignOut}

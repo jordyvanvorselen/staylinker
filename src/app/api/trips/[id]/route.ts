@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 // GET a specific trip by ID
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: { params: { id: string } }) {
+  const { id } = await context.params;
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
     
     const trip = await prisma.trip.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         stays: true,
       },
@@ -23,8 +24,17 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
     }
     
-    // Ensure the user owns this trip
-    if (trip.userId !== token.id) {
+    // Check if the user has access to this trip via TripUser relationship
+    const tripUser = await prisma.tripUser.findUnique({
+      where: {
+        userId_tripId: {
+          userId: token.id as string,
+          tripId: id
+        }
+      }
+    });
+    
+    if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
@@ -35,7 +45,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT update a trip
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+  const { id } = await context.params;
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
@@ -48,21 +59,35 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     // Check if trip exists
     const existingTrip = await prisma.trip.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingTrip) {
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
     }
     
-    // Ensure the user owns this trip
-    if (existingTrip.userId !== token.id) {
+    // Check if the user has access to this trip via TripUser relationship
+    const tripUser = await prisma.tripUser.findUnique({
+      where: {
+        userId_tripId: {
+          userId: token.id as string,
+          tripId: id
+        }
+      }
+    });
+    
+    if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    // Check if user is the owner (only owners can update trip details)
+    if (existingTrip.ownerId !== token.id) {
+      return NextResponse.json({ error: 'Only the trip owner can update trip details' }, { status: 403 });
     }
 
     // Update the trip
     const updatedTrip = await prisma.trip.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name: data.name,
         description: data.description,
@@ -76,7 +101,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE a trip
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+  const { id } = await context.params;
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
@@ -87,21 +113,35 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     
     // Check if trip exists
     const existingTrip = await prisma.trip.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingTrip) {
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
     }
     
-    // Ensure the user owns this trip
-    if (existingTrip.userId !== token.id) {
+    // Check if the user has access to this trip via TripUser relationship
+    const tripUser = await prisma.tripUser.findUnique({
+      where: {
+        userId_tripId: {
+          userId: token.id as string,
+          tripId: id
+        }
+      }
+    });
+    
+    if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    // Delete the trip (will cascade delete all related stays)
+    // Check if user is the owner (only owners can delete trips)
+    if (existingTrip.ownerId !== token.id) {
+      return NextResponse.json({ error: 'Only the trip owner can delete the trip' }, { status: 403 });
+    }
+
+    // Delete the trip (will cascade delete all related stays and TripUser records)
     await prisma.trip.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ success: true }, { status: 200 });

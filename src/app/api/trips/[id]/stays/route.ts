@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 // POST: Create a new stay for a trip
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, context: { params: { id: string } }) {
+  const { id } = await context.params;
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
@@ -12,9 +13,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const tripId = params.id;
+    const tripId = id;
     
-    // Check if trip exists and belongs to user
+    // Check if trip exists
     const trip = await prisma.trip.findUnique({
       where: { id: tripId },
     });
@@ -23,8 +24,17 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
     }
     
-    // Ensure the user owns this trip
-    if (trip.userId !== token.id) {
+    // Check if the user has access to this trip via TripUser relationship
+    const tripUser = await prisma.tripUser.findUnique({
+      where: {
+        userId_tripId: {
+          userId: token.id as string,
+          tripId
+        }
+      }
+    });
+    
+    if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
     
@@ -57,7 +67,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 }
 
 // GET: Get all stays for a trip
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: { params: { id: string } }) {
+  const { id } = await context.params;
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
@@ -66,9 +77,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const tripId = params.id;
+    const tripId = id;
     
-    // Check if trip exists and belongs to user
+    // Check if trip exists
     const trip = await prisma.trip.findUnique({
       where: { id: tripId },
       include: { stays: true }
@@ -78,8 +89,17 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
     }
     
-    // Ensure the user owns this trip
-    if (trip.userId !== token.id) {
+    // Check if the user has access to this trip via TripUser relationship
+    const tripUser = await prisma.tripUser.findUnique({
+      where: {
+        userId_tripId: {
+          userId: token.id as string,
+          tripId
+        }
+      }
+    });
+    
+    if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
     

@@ -39,14 +39,17 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  trips         Trip[]    // A user can have multiple trips
+  id                String           @id @default(uuid())
+  name              String?
+  email             String?          @unique
+  emailVerified     DateTime?
+  image             String?
+  accounts          Account[]
+  sessions          Session[]
+  trips             TripUser[]        // Many-to-many relation with trips
+  ownedTrips        Trip[]           @relation("TripOwner") // Trips this user created/owns
+  receivedInvites   TripInvitation[] @relation("InvitedUser")
+  sentInvites       TripInvitation[] @relation("InvitingSender")
 }
 
 model VerificationToken {
@@ -58,16 +61,31 @@ model VerificationToken {
 }
 
 model Trip {
-  id          String   @id @default(uuid())
-  name        String
-  description String?  // Optional description
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  stays       Stay[]   // One Trip can have multiple Stays
+  id            String           @id @default(uuid())
+  name          String
+  description   String?          // Optional description
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  stays         Stay[]           // One Trip can have multiple Stays
+  invitations   TripInvitation[] // Trip invitations
+  users         TripUser[]       // Many-to-many relation with users
   
-  // Relationship to User
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
+  // Relationship to Owner User (who created the trip)
+  owner         User             @relation("TripOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId       String
+}
+
+// Join table for many-to-many relationship between User and Trip
+model TripUser {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripId    String
+  createdAt DateTime @default(now())
+  
+  // Each user can only be added to a trip once
+  @@unique([userId, tripId])
 }
 
 model Stay {
@@ -86,3 +104,25 @@ model Stay {
   trip           Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
   tripId         String
 }
+
+// TripInvitation model for inviting users to trips
+model TripInvitation {
+  id        String   @id @default(uuid())
+  email     String   // Email of the invited user
+  status    String   @default("pending") // pending, accepted, declined
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripId    String
+  
+  // Relation to the User that sent the invitation
+  sender    User     @relation("InvitingSender", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId  String
+  
+  // Relation to the User that received the invitation (optional, may not exist yet)
+  invitee   User?    @relation("InvitedUser", fields: [inviteeId], references: [id], onDelete: SetNull)
+  inviteeId String?
+}
+

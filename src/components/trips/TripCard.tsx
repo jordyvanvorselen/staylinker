@@ -86,8 +86,10 @@ const TripCard = ({ trip, onClick }: TripCardProps) => {
         <div className="flex items-center gap-2">
           <span className="font-medium text-md">{trip.name}</span>
         </div>
-        <div className="badge badge-primary badge-sm">
-          {stayCount} {stayCount === 1 ? 'stay' : 'stays'}
+        <div className="flex items-center gap-2">
+          <div className="badge badge-primary badge-sm">
+            {stayCount} {stayCount === 1 ? 'stay' : 'stays'}
+          </div>
         </div>
       </div>
 
@@ -144,8 +146,61 @@ const TripCard = ({ trip, onClick }: TripCardProps) => {
           <ClipboardList className="h-4 w-4 text-gray-500" />
           <span className="text-xs text-gray-500">Created {formatDate(trip.createdAt)}</span>
         </div>
-        <div>
-          <span className="text-xs text-gray-500">Updated {formatDate(trip.updatedAt)}</span>
+        
+        {/* Trip members */}
+        <div className="flex items-center gap-2">
+          {trip.users && trip.users.length > 0 && (
+            <div className="flex -space-x-2 ml-2" aria-label="Trip members">
+              {/* Show owner first */}
+              {trip.owner && (
+                <div 
+                  className="avatar z-10"
+                  title={`Owner: ${trip.owner.name || 'Unknown'}`}
+                >
+                  <div className="w-6 h-6 rounded-full ring-2 ring-primary ring-offset-1 ring-offset-base-100">
+                    {trip.owner.image ? (
+                      <img src={trip.owner.image} alt={trip.owner.name || 'Trip owner'} />
+                    ) : (
+                      <div className="bg-primary text-primary-content flex items-center justify-center text-xs font-bold">
+                        {trip.owner.name?.charAt(0) || 'U'}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+              
+              {/* Show first 3 other members */}
+              {trip.users.filter(tripUser => tripUser.user.id !== trip.ownerId)
+                .slice(0, 3)
+                .map(tripUser => (
+                  <div 
+                    key={tripUser.user.id}
+                    className="avatar"
+                    title={tripUser.user.name || 'Trip member'}
+                  >
+                    <div className="w-6 h-6 rounded-full ring-1 ring-base-300 ring-offset-1 ring-offset-base-100">
+                      {tripUser.user.image ? (
+                        <img src={tripUser.user.image} alt={tripUser.user.name || 'Trip member'} />
+                      ) : (
+                        <div className="bg-base-300 text-base-content flex items-center justify-center text-xs font-bold">
+                          {tripUser.user.name?.charAt(0) || 'U'}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              }
+              
+              {/* Show count of additional members */}
+              {trip.users.filter(tripUser => tripUser.user.id !== trip.ownerId).length > 3 && (
+                <div className="avatar placeholder">
+                  <div className="w-6 h-6 rounded-full bg-neutral text-neutral-content ring-1 ring-base-300 flex items-center justify-center text-xs">
+                    <span>+{trip.users.filter(tripUser => tripUser.user.id !== trip.ownerId).length - 3}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

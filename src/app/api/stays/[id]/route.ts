@@ -2,10 +2,11 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET a specific stay by ID
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, context: { params: { id: string } }) {
+  const { id } = await context.params;
   try {
     const stay = await prisma.stay.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!stay) {
@@ -19,13 +20,14 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
 }
 
 // PUT update a stay
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+  const { id } = await context.params;
   try {
     const data = await request.json();
 
     // Check if stay exists
     const existingStay = await prisma.stay.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingStay) {
@@ -34,7 +36,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     // Update the stay
     const updatedStay = await prisma.stay.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         location: data.location,
         address: data.address,
@@ -55,11 +57,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE a stay
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_request: NextRequest, context: { params: { id: string } }) {
+  const { id } = await context.params;
   try {
     // Check if stay exists
     const existingStay = await prisma.stay.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingStay) {
@@ -68,7 +71,7 @@ export async function DELETE(_request: NextRequest, { params }: { params: { id: 
 
     // Delete the stay
     await prisma.stay.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ success: true }, { status: 200 });

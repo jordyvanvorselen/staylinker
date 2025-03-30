@@ -12,13 +12,36 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    // Find all trips for the current user
+    // Find all trips the user has access to via TripUser junction table
     const trips = await prisma.trip.findMany({
       where: {
-        userId: token.id as string
+        users: {
+          some: {
+            userId: token.id as string
+          }
+        }
       },
       include: {
         stays: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            image: true
+          }
+        },
+        // Include other users who have access to the trip
+        users: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true
+              }
+            }
+          }
+        }
       },
       orderBy: {
         createdAt: 'desc'
@@ -52,7 +75,19 @@ export async function POST(request: NextRequest) {
       data: {
         name: data.name,
         description: data.description,
-        userId: token.id as string, // Associate with the current user
+        owner: {
+          connect: { id: token.id as string }
+        },
+        // Also add the owner as a user with access to the trip via TripUser
+        users: {
+          create: [
+            {
+              user: {
+                connect: { id: token.id as string }
+              }
+            }
+          ]
+        }
       },
     });
 
