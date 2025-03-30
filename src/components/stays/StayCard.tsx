@@ -38,7 +38,7 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
 
   return (
     <div
-      className="card bg-base-200/30 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden rounded-xl ring-1 ring-base-300 hover:ring-primary/30"
+      className="card bg-base-200/30 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden rounded-xl ring-1 ring-base-300 hover:ring-primary/30 hover:translate-y-[-2px]"
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
@@ -65,7 +65,7 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
         <div className="flex flex-col items-center mb-3">
           <h2 className="card-title text-xl font-bold text-center mb-1">{stay.location}</h2>
           <p className="text-sm text-gray-600 text-center">{stay.address}</p>
-          <div className="badge badge-primary badge-lg mt-3 opacity-80">
+          <div className="badge badge-primary badge-lg mt-4 py-3 px-4 text-sm font-semibold shadow-sm">
             {dayCount} {dayCount === 1 ? 'day' : 'days'}
           </div>
         </div>

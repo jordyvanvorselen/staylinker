@@ -129,7 +129,7 @@ const StayDistance = ({ originStay, destinationStay }: StayDistanceProps) => {
       <DashedConnector height={8} spacing="mb-2" />
 
       <button
-        className="flex items-center gap-2 bg-base-100/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm hover:bg-base-100 transition-colors ring-1 ring-base-300"
+        className="flex items-center gap-2 bg-gradient-to-r from-primary/10 to-base-100/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm hover:shadow-md hover:from-primary/15 hover:to-base-100/90 transition-all duration-300 ring-1 ring-base-300 hover:ring-primary/30"
         onClick={handleMapsClick}
         onKeyDown={handleKeyDown}
         tabIndex={0}
