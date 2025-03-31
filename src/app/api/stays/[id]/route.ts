@@ -2,8 +2,8 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET a specific stay by ID
-export async function GET(_request: NextRequest, context: { params: { id: string } }) {
-  const { id } = await context.params;
+export async function GET(_request: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const stay = await prisma.stay.findUnique({
       where: { id },
@@ -20,8 +20,8 @@ export async function GET(_request: NextRequest, context: { params: { id: string
 }
 
 // PUT update a stay
-export async function PUT(request: NextRequest, context: { params: { id: string } }) {
-  const { id } = await context.params;
+export async function PUT(request: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const data = await request.json();
 
@@ -34,20 +34,23 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
       return NextResponse.json({ error: 'Stay not found' }, { status: 404 });
     }
 
+    // Prepare update data without undefined values
+    const updateData: any = {};
+    
+    // Only include fields that are present in the request
+    if (data.location !== undefined) updateData.location = data.location;
+    if (data.address !== undefined) updateData.address = data.address;
+    if (data.arrivalDate !== undefined) updateData.arrivalDate = new Date(data.arrivalDate);
+    if (data.departureDate !== undefined) updateData.departureDate = new Date(data.departureDate);
+    if (data.notes !== undefined) updateData.notes = data.notes;
+    if (data.arrivalNotes !== undefined) updateData.arrivalNotes = data.arrivalNotes;
+    if (data.departureNotes !== undefined) updateData.departureNotes = data.departureNotes;
+    // We don't update tripId here to prevent moving stays between trips
+    
     // Update the stay
     const updatedStay = await prisma.stay.update({
       where: { id },
-      data: {
-        location: data.location,
-        address: data.address,
-        arrivalDate: data.arrivalDate ? new Date(data.arrivalDate) : undefined,
-        departureDate: data.departureDate ? new Date(data.departureDate) : undefined,
-        notes: data.notes,
-        arrivalNotes: data.arrivalNotes,
-        departureNotes: data.departureNotes,
-        // We don't update tripId here to prevent moving stays between trips
-        // If that's needed, it should be a specific operation
-      },
+      data: updateData,
     });
 
     return NextResponse.json(updatedStay);
@@ -57,8 +60,8 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
 }
 
 // DELETE a stay
-export async function DELETE(_request: NextRequest, context: { params: { id: string } }) {
-  const { id } = await context.params;
+export async function DELETE(_request: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     // Check if stay exists
     const existingStay = await prisma.stay.findUnique({

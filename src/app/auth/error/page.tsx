@@ -1,9 +1,11 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function AuthError() {
+// Error message component that uses useSearchParams
+function ErrorMessage() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
 
@@ -17,11 +19,23 @@ export default function AuthError() {
     errorMessage = 'The verification link has expired or has already been used.';
   }
 
+  return <div className="p-4 mb-6 text-sm text-red-700 bg-red-100 rounded-lg">{errorMessage}</div>;
+}
+
+// Loading fallback
+function ErrorMessageFallback() {
+  return <div className="p-4 mb-6 text-sm bg-gray-100 rounded-lg">Loading error details...</div>;
+}
+
+// Main page component
+export default function AuthError() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
         <h1 className="mb-6 text-2xl font-bold text-center text-red-600">Authentication Error</h1>
-        <div className="p-4 mb-6 text-sm text-red-700 bg-red-100 rounded-lg">{errorMessage}</div>
+        <Suspense fallback={<ErrorMessageFallback />}>
+          <ErrorMessage />
+        </Suspense>
         <div className="flex justify-center">
           <Link
             href="/auth/signin"

@@ -7,12 +7,19 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const tripId = searchParams.get('tripId');
 
-    const stays = await prisma.stay.findMany({
-      where: tripId ? { tripId } : undefined,
+    // Prepare query options
+    const queryOptions: any = {
       orderBy: {
         arrivalDate: 'asc',
-      },
-    });
+      }
+    };
+    
+    // Only add where clause if tripId is provided
+    if (tripId) {
+      queryOptions.where = { tripId };
+    }
+    
+    const stays = await prisma.stay.findMany(queryOptions);
 
     return NextResponse.json(stays);
   } catch (_error) {

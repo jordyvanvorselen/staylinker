@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 // POST: Create a new stay for a trip
-export async function POST(request: NextRequest, context: { params: { id: string } }) {
-  const { id } = await context.params;
+export async function POST(request: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
@@ -67,8 +67,8 @@ export async function POST(request: NextRequest, context: { params: { id: string
 }
 
 // GET: Get all stays for a trip
-export async function GET(request: NextRequest, context: { params: { id: string } }) {
-  const { id } = await context.params;
+export async function GET(request: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     // Get the user's session token
     const token = await getToken({ req: request });

@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 // PUT: Update an invitation status (accept or decline)
-export async function PUT(request: NextRequest, context: { params: { id: string } }) {
-  const { id } = await context.params;
+export async function PUT(request: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
 
   try {
     // Get the user's session token
