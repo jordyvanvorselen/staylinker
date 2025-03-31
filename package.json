@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint && prettier --check .",
     "lint:fix": "next lint --fix && prettier --write .",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate && prisma migrate deploy"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.8.0",
