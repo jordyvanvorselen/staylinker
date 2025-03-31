@@ -6,7 +6,7 @@ import DashedConnector from '../ui/DashedConnector';
 
 interface GapIndicatorProps {
   gapInDays: number;
-  onClick?: (e: React.MouseEvent | React.KeyboardEvent) => void;
+  onClick?: (_e: React.MouseEvent | React.KeyboardEvent) => void;
 }
 
 const GapIndicator = ({ gapInDays, onClick }: GapIndicatorProps) => {
@@ -48,13 +48,15 @@ const GapIndicator = ({ gapInDays, onClick }: GapIndicatorProps) => {
             </div>
             <div className="flex flex-col">
               <span className="text-base font-semibold">{gapInDays}-day gap</span>
-              <span className="text-xs font-medium text-gray-600">Unplanned period between stays</span>
+              <span className="text-xs font-medium text-gray-600">
+                Unplanned period between stays
+              </span>
             </div>
           </div>
 
           <button
             className="flex items-center justify-center bg-primary text-primary-content rounded-full p-2 shadow-sm hover:shadow-md transition-all duration-200"
-            onClick={(e) => handleAddStay(e)}
+            onClick={e => handleAddStay(e)}
             onKeyDown={handleKeyDown}
             tabIndex={0}
             aria-label="Add a new stay"

@@ -1,7 +1,7 @@
-import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/lib/prisma";
+import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { prisma } from '@/lib/prisma';
 
 // Make sure that the NEXTAUTH_SECRET environment variable is set
 if (!process.env.NEXTAUTH_SECRET) {
@@ -30,7 +30,7 @@ const handler = NextAuth({
     async signIn() {
       return true;
     },
-    
+
     // Add user ID to the token during authentication
     async jwt({ token, user }) {
       if (user) {
@@ -38,7 +38,7 @@ const handler = NextAuth({
       }
       return token;
     },
-    
+
     // Add user ID from token to the session
     async session({ session, token }) {
       if (session?.user) {

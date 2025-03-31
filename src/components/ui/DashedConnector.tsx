@@ -26,9 +26,9 @@ const DashedConnector = ({
     8: 'h-8',
     10: 'h-10',
     12: 'h-12',
-    16: 'h-16'
+    16: 'h-16',
   };
-  
+
   // Map for opacity classes
   const opacityClasses: Record<OpacityOption, string> = {
     30: 'opacity-30',
@@ -38,19 +38,16 @@ const DashedConnector = ({
     70: 'opacity-70',
     80: 'opacity-80',
     90: 'opacity-90',
-    100: 'opacity-100'
+    100: 'opacity-100',
   };
 
   // Compose the className
   const baseClasses = `border-l-2 border-dashed border-${color} ${opacityClasses[opacity]} ${heightClasses[height]}`;
-  const classes = spacing ? `${baseClasses} ${spacing} ${className}` : `${baseClasses} ${className}`;
-  
-  return (
-    <div 
-      className={classes}
-      aria-hidden="true"
-    />
-  );
+  const classes = spacing
+    ? `${baseClasses} ${spacing} ${className}`
+    : `${baseClasses} ${className}`;
+
+  return <div className={classes} aria-hidden="true" />;
 };
 
 export default DashedConnector;

@@ -8,48 +8,51 @@ export async function POST(request: NextRequest, context: { params: { id: string
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
-    
+
     if (!token || !token.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     const tripId = id;
-    
+
     // Check if trip exists
     const trip = await prisma.trip.findUnique({
       where: { id: tripId },
     });
-    
+
     if (!trip) {
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
     }
-    
+
     // Ensure the user has access to this trip
     const tripUser = await prisma.tripUser.findUnique({
       where: {
         userId_tripId: {
           userId: token.id as string,
-          tripId
-        }
-      }
+          tripId,
+        },
+      },
     });
-    
+
     if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
-    
+
     // Only trip owner should be able to send invites
     if (trip.ownerId !== token.id) {
-      return NextResponse.json({ error: 'Only the trip owner can send invitations' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Only the trip owner can send invitations' },
+        { status: 403 },
+      );
     }
-    
+
     const data = await request.json();
-    
+
     // Validate required fields
     if (!data.email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
-    
+
     // Check if invitation already exists
     const existingInvitation = await prisma.tripInvitation.findFirst({
       where: {
@@ -58,16 +61,16 @@ export async function POST(request: NextRequest, context: { params: { id: string
         status: 'pending',
       },
     });
-    
+
     if (existingInvitation) {
       return NextResponse.json({ error: 'Invitation already sent' }, { status: 400 });
     }
-    
+
     // Find the target user (if they exist)
     const targetUser = await prisma.user.findUnique({
       where: { email: data.email },
     });
-    
+
     // Create the invitation
     const invitation = await prisma.tripInvitation.create({
       data: {
@@ -78,7 +81,7 @@ export async function POST(request: NextRequest, context: { params: { id: string
         ...(targetUser ? { invitee: { connect: { id: targetUser.id } } } : {}),
       },
     });
-    
+
     return NextResponse.json(invitation, { status: 201 });
   } catch (error) {
     console.error('Error sending invitation:', error);

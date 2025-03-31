@@ -8,11 +8,11 @@ export async function GET(request: NextRequest, context: { params: { id: string 
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
-    
+
     if (!token || !token.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     const trip = await prisma.trip.findUnique({
       where: { id },
       include: {
@@ -23,23 +23,23 @@ export async function GET(request: NextRequest, context: { params: { id: string 
     if (!trip) {
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
     }
-    
+
     // Check if the user has access to this trip via TripUser relationship
     const tripUser = await prisma.tripUser.findUnique({
       where: {
         userId_tripId: {
           userId: token.id as string,
-          tripId: id
-        }
-      }
+          tripId: id,
+        },
+      },
     });
-    
+
     if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     return NextResponse.json(trip);
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to fetch trip' }, { status: 500 });
   }
 }
@@ -50,11 +50,11 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
-    
+
     if (!token || !token.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     const data = await request.json();
 
     // Check if trip exists
@@ -65,24 +65,27 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
     if (!existingTrip) {
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
     }
-    
+
     // Check if the user has access to this trip via TripUser relationship
     const tripUser = await prisma.tripUser.findUnique({
       where: {
         userId_tripId: {
           userId: token.id as string,
-          tripId: id
-        }
-      }
+          tripId: id,
+        },
+      },
     });
-    
+
     if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     // Check if user is the owner (only owners can update trip details)
     if (existingTrip.ownerId !== token.id) {
-      return NextResponse.json({ error: 'Only the trip owner can update trip details' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Only the trip owner can update trip details' },
+        { status: 403 },
+      );
     }
 
     // Update the trip
@@ -95,7 +98,7 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
     });
 
     return NextResponse.json(updatedTrip);
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to update trip' }, { status: 500 });
   }
 }
@@ -106,11 +109,11 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
-    
+
     if (!token || !token.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     // Check if trip exists
     const existingTrip = await prisma.trip.findUnique({
       where: { id },
@@ -119,24 +122,27 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
     if (!existingTrip) {
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
     }
-    
+
     // Check if the user has access to this trip via TripUser relationship
     const tripUser = await prisma.tripUser.findUnique({
       where: {
         userId_tripId: {
           userId: token.id as string,
-          tripId: id
-        }
-      }
+          tripId: id,
+        },
+      },
     });
-    
+
     if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     // Check if user is the owner (only owners can delete trips)
     if (existingTrip.ownerId !== token.id) {
-      return NextResponse.json({ error: 'Only the trip owner can delete the trip' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Only the trip owner can delete the trip' },
+        { status: 403 },
+      );
     }
 
     // Delete the trip (will cascade delete all related stays and TripUser records)
@@ -145,7 +151,7 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
     });
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to delete trip' }, { status: 500 });
   }
 }

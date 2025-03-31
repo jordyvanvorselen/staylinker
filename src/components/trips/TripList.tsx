@@ -68,7 +68,7 @@ const TripList = () => {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-8 pt-2">
         <h1 className="text-3xl font-bold tracking-tight">Your Trips</h1>
-        <Link 
+        <Link
           href="/trips/new"
           className="flex items-center justify-center bg-primary text-primary-content rounded-full p-3 shadow-sm hover:shadow-md active:shadow-inner active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-focus focus:ring-offset-2"
           aria-label="Add a new trip"
@@ -85,9 +85,11 @@ const TripList = () => {
             </div>
           </div>
           <h3 className="font-medium text-lg mb-2">No trips found</h3>
-          <p className="text-gray-600 mb-6">Start planning your adventures by creating your first trip!</p>
+          <p className="text-gray-600 mb-6">
+            Start planning your adventures by creating your first trip!
+          </p>
           <div className="flex justify-center">
-            <Link 
+            <Link
               href="/trips/new"
               className="flex items-center justify-center bg-primary text-primary-content rounded-full p-4 shadow-sm hover:shadow-md active:shadow-inner active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-focus focus:ring-offset-2"
               aria-label="Create your first trip"
@@ -99,12 +101,8 @@ const TripList = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Display all trips in a grid layout */}
-          {trips.map((trip) => (
-            <TripCard 
-              key={trip.id} 
-              trip={trip} 
-              onClick={handleTripClick} 
-            />
+          {trips.map(trip => (
+            <TripCard key={trip.id} trip={trip} onClick={handleTripClick} />
           ))}
         </div>
       )}

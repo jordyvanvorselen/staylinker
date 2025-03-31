@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { signOut } from "next-auth/react";
-import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { signOut } from 'next-auth/react';
+import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function SignOut() {
   const router = useRouter();
   const { isAuthenticated, loading } = useAuth();
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/auth/signin" });
+    await signOut({ callbackUrl: '/auth/signin' });
   };
 
   // If not authenticated, redirect to sign in
   useEffect(() => {
     if (!isAuthenticated && !loading) {
-      router.push("/auth/signin");
+      router.push('/auth/signin');
     }
   }, [isAuthenticated, loading, router]);
 

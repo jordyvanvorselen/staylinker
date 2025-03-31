@@ -70,7 +70,7 @@ const StayList = () => {
           <h3 className="font-medium text-lg mb-2">No stays found</h3>
           <p className="text-gray-600">Plan your first trip by adding a stay!</p>
           <div className="mt-4 flex justify-center">
-            <button 
+            <button
               className="flex items-center justify-center bg-primary text-primary-content rounded-full p-3 shadow-sm hover:shadow-md transition-all duration-200"
               aria-label="Add a new stay"
               role="button"
@@ -93,7 +93,7 @@ const StayList = () => {
               )}
             </div>
           ))}
-          
+
           {/* Add the 'Add New Stay' prompt at the end of the timeline */}
           <div className="mb-2">
             <AddStayPrompt onClick={() => {}} />

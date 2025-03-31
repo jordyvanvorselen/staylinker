@@ -7,7 +7,7 @@ import { Calendar } from 'lucide-react';
 
 interface StayCardProps {
   stay: Stay;
-  onClick?: (stay: Stay) => void;
+  onClick?: (_stay: Stay) => void;
 }
 
 const StayCard = ({ stay, onClick }: StayCardProps) => {
@@ -72,7 +72,9 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
 
         {stay.notes && (
           <div className="mt-4 px-2">
-            <p className={`text-xs text-gray-500 italic ${isExpanded ? '' : 'line-clamp-2'}`}>{stay.notes}</p>
+            <p className={`text-xs text-gray-500 italic ${isExpanded ? '' : 'line-clamp-2'}`}>
+              {stay.notes}
+            </p>
             {stay.notes.length > 80 && (
               <button
                 className="text-xs text-accent hover:text-accent-focus mt-1"

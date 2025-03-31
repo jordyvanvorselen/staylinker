@@ -14,7 +14,7 @@ export async function GET(_request: NextRequest, context: { params: { id: string
     }
 
     return NextResponse.json(stay);
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to fetch stay' }, { status: 500 });
   }
 }
@@ -51,7 +51,7 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
     });
 
     return NextResponse.json(updatedStay);
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to update stay' }, { status: 500 });
   }
 }
@@ -75,7 +75,7 @@ export async function DELETE(_request: NextRequest, context: { params: { id: str
     });
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to delete stay' }, { status: 500 });
   }
 }

@@ -22,7 +22,7 @@ export default function NewStayPage() {
     departureDate: new Date(new Date().setDate(new Date().getDate() + 1)), // Default to tomorrow
     arrivalNotes: '',
     departureNotes: '',
-    notes: ''
+    notes: '',
   });
 
   // Handle text input changes
@@ -30,7 +30,7 @@ export default function NewStayPage() {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -39,9 +39,9 @@ export default function NewStayPage() {
     if (date) {
       setFormData(prev => ({
         ...prev,
-        [name]: date
+        [name]: date,
       }));
-      
+
       // If arrival date changes and it's later than departure, update departure
       if (name === 'arrivalDate' && date > formData.departureDate) {
         // Set departure to arrival + 1 day
@@ -49,7 +49,7 @@ export default function NewStayPage() {
         newDeparture.setDate(date.getDate() + 1);
         setFormData(prev => ({
           ...prev,
-          departureDate: newDeparture
+          departureDate: newDeparture,
         }));
       }
     }
@@ -68,7 +68,7 @@ export default function NewStayPage() {
         return;
       }
     }
-    
+
     setError(null);
     setStep(prev => prev + 1);
   };
@@ -80,24 +80,24 @@ export default function NewStayPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Final validation
     if (!formData.location.trim() || !formData.address.trim()) {
       setError('Location and address are required');
       setStep(1); // Go back to first step
       return;
     }
-    
+
     if (formData.arrivalDate >= formData.departureDate) {
       setError('Departure date must be after arrival date');
       setStep(2); // Go to dates step
       return;
     }
-    
+
     try {
       setIsSubmitting(true);
       setError(null);
-      
+
       const response = await fetch(`/api/trips/${tripId}/stays`, {
         method: 'POST',
         headers: {
@@ -105,12 +105,12 @@ export default function NewStayPage() {
         },
         body: JSON.stringify(formData),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to create stay');
       }
-      
+
       // Redirect to trip detail page
       router.push(`/trips/${tripId}`);
     } catch (err) {
@@ -123,7 +123,7 @@ export default function NewStayPage() {
   return (
     <div className="container mx-auto p-4 max-w-2xl">
       <div className="mb-6">
-        <Link 
+        <Link
           href={`/trips/${tripId}`}
           className="btn btn-ghost btn-sm gap-2 hover:bg-base-200 active:bg-base-300 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-base-300"
           aria-label="Back to trip"
@@ -132,24 +132,24 @@ export default function NewStayPage() {
           Back to Trip
         </Link>
       </div>
-      
+
       <div className="card bg-base-100 shadow-xl">
         <div className="card-body">
           <h1 className="card-title text-2xl mb-4">Add New Stay</h1>
-          
+
           {/* Progress steps */}
           <ul className="steps w-full mb-8">
             <li className={`step ${step >= 1 ? 'step-primary' : ''}`}>Location</li>
             <li className={`step ${step >= 2 ? 'step-primary' : ''}`}>Dates</li>
             <li className={`step ${step >= 3 ? 'step-primary' : ''}`}>Details</li>
           </ul>
-          
+
           {error && (
             <div className="alert alert-error mb-4">
               <span>{error}</span>
             </div>
           )}
-          
+
           <form onSubmit={handleSubmit}>
             {/* Step 1: Location */}
             {step === 1 && (
@@ -176,7 +176,7 @@ export default function NewStayPage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="form-control w-full">
                   <label className="label" htmlFor="address">
                     <span className="label-text font-medium">Address</span>
@@ -193,7 +193,7 @@ export default function NewStayPage() {
                     aria-required="true"
                   />
                 </div>
-                
+
                 <div className="flex justify-end mt-6">
                   <button
                     type="button"
@@ -205,7 +205,7 @@ export default function NewStayPage() {
                 </div>
               </div>
             )}
-            
+
             {/* Step 2: Dates */}
             {step === 2 && (
               <div className="space-y-6">
@@ -242,7 +242,7 @@ export default function NewStayPage() {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="form-control w-full">
                     <label className="label" htmlFor="departureDate">
                       <span className="label-text font-medium">Departure Date</span>
@@ -277,7 +277,7 @@ export default function NewStayPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-between mt-6">
                   <button
                     type="button"
@@ -296,7 +296,7 @@ export default function NewStayPage() {
                 </div>
               </div>
             )}
-            
+
             {/* Step 3: Stay Notes */}
             {step === 3 && (
               <div className="space-y-4">
@@ -314,7 +314,7 @@ export default function NewStayPage() {
                     className="textarea textarea-bordered h-48 w-full"
                   />
                 </div>
-                
+
                 <div className="flex justify-between mt-6">
                   <button
                     type="button"

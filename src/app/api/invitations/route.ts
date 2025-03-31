@@ -7,20 +7,20 @@ export async function GET(request: NextRequest) {
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
-    
+
     if (!token || !token.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     // Get the user's email
     const user = await prisma.user.findUnique({
       where: { id: token.id as string },
     });
-    
+
     if (!user || !user.email) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-    
+
     // Find all invitations for this user's email that are still pending
     const invitations = await prisma.tripInvitation.findMany({
       where: {
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-    
+
     return NextResponse.json(invitations);
   } catch (error) {
     console.error('Error fetching invitations:', error);

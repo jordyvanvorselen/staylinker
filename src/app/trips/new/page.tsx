@@ -11,30 +11,30 @@ export default function NewTripPage() {
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
-    description: ''
+    description: '',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation
     if (!formData.name.trim()) {
       setError('Trip name is required');
       return;
     }
-    
+
     try {
       setIsSubmitting(true);
       setError(null);
-      
+
       const response = await fetch('/api/trips', {
         method: 'POST',
         headers: {
@@ -42,12 +42,12 @@ export default function NewTripPage() {
         },
         body: JSON.stringify(formData),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to create trip');
       }
-      
+
       // Successfully created trip, redirect to home page
       router.push('/');
     } catch (err) {
@@ -60,26 +60,22 @@ export default function NewTripPage() {
   return (
     <div className="container mx-auto p-4 max-w-2xl">
       <div className="mb-6">
-        <Link 
-          href="/"
-          className="btn btn-ghost btn-sm gap-2"
-          aria-label="Back to trips"
-        >
+        <Link href="/" className="btn btn-ghost btn-sm gap-2" aria-label="Back to trips">
           <ArrowLeft className="h-4 w-4" />
           Back to Trips
         </Link>
       </div>
-      
+
       <div className="card bg-base-100 shadow-xl">
         <div className="card-body">
           <h1 className="card-title text-2xl mb-6">Create New Trip</h1>
-          
+
           {error && (
             <div className="alert alert-error mb-4">
               <span>{error}</span>
             </div>
           )}
-          
+
           <form onSubmit={handleSubmit}>
             <div className="form-control w-full mb-4">
               <label className="label" htmlFor="name">
@@ -99,7 +95,7 @@ export default function NewTripPage() {
                 aria-required="true"
               />
             </div>
-            
+
             <div className="form-control w-full mb-6">
               <label className="label" htmlFor="description">
                 <span className="label-text font-medium">Description</span>
@@ -115,7 +111,7 @@ export default function NewTripPage() {
                 disabled={isSubmitting}
               />
             </div>
-            
+
             <div className="flex justify-end">
               <button
                 type="submit"

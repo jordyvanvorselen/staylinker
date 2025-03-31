@@ -13,32 +13,32 @@ import InviteUserForm from '@/components/trips/InviteUserForm';
 export default function TripDetailPage() {
   const params = useParams();
   const tripId = params['id'] as string;
-  
+
   const [trip, setTrip] = useState<Trip | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchTripDetails = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const response = await fetch(`/api/trips/${tripId}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch trip details');
-      }
-      
-      const data = await response.json();
-      setTrip(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchTripDetails = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await fetch(`/api/trips/${tripId}`);
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch trip details');
+        }
+
+        const data = await response.json();
+        setTrip(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     if (tripId) {
       fetchTripDetails();
     }
@@ -70,7 +70,9 @@ export default function TripDetailPage() {
               <span>{error || 'Trip not found'}</span>
             </div>
             <div className="mt-4">
-              <Link href="/" className="btn btn-primary">Back to Trips</Link>
+              <Link href="/" className="btn btn-primary">
+                Back to Trips
+              </Link>
             </div>
           </div>
         </div>
@@ -78,17 +80,13 @@ export default function TripDetailPage() {
     );
   }
 
-  // Format dates
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  };
+  // Date formatting is handled by components
 
   return (
     <div className="container mx-auto p-4">
       {/* Header with back button */}
       <div className="flex justify-between items-center mb-6">
-        <Link 
+        <Link
           href="/"
           className="btn btn-ghost btn-sm gap-2 hover:bg-base-200 active:bg-base-300 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-base-300"
           aria-label="Back to trips"
@@ -96,11 +94,11 @@ export default function TripDetailPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to Trips
         </Link>
-        
+
         <div className="flex items-center gap-2">
           <InviteUserForm tripId={tripId} />
-          
-          <Link 
+
+          <Link
             href={`/trips/${tripId}/stays/new`}
             className="btn btn-primary btn-sm"
             aria-label="Add a new stay"
@@ -110,8 +108,8 @@ export default function TripDetailPage() {
           </Link>
         </div>
       </div>
-      
-      {(!trip.stays || trip.stays.length === 0) ? (
+
+      {!trip.stays || trip.stays.length === 0 ? (
         <div className="card bg-base-100 shadow p-6 text-center">
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
@@ -121,7 +119,7 @@ export default function TripDetailPage() {
           <h3 className="font-medium text-lg mb-2">No stays found</h3>
           <p className="text-gray-600 mb-6">Add your first stay to this trip!</p>
           <div className="flex justify-center">
-            <Link 
+            <Link
               href={`/trips/${tripId}/stays/new`}
               className="btn btn-primary gap-2 hover:shadow-md active:scale-95 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-primary-focus focus:ring-offset-2"
               aria-label="Add your first stay"
@@ -146,7 +144,7 @@ export default function TripDetailPage() {
                 )}
               </div>
             ))}
-          
+
           {/* Add the 'Add New Stay' prompt at the end of the timeline */}
           <AddStayPrompt tripId={tripId} />
         </div>

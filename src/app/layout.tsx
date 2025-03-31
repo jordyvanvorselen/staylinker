@@ -32,9 +32,7 @@ export default function RootLayout({
           <ThemeProvider>
             <div className="flex flex-col h-full">
               <Header />
-              <main className="flex-grow h-full">
-                {children}
-              </main>
+              <main className="flex-grow h-full">{children}</main>
             </div>
           </ThemeProvider>
         </AuthProvider>

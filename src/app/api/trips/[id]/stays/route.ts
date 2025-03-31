@@ -8,43 +8,43 @@ export async function POST(request: NextRequest, context: { params: { id: string
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
-    
+
     if (!token || !token.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     const tripId = id;
-    
+
     // Check if trip exists
     const trip = await prisma.trip.findUnique({
       where: { id: tripId },
     });
-    
+
     if (!trip) {
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
     }
-    
+
     // Check if the user has access to this trip via TripUser relationship
     const tripUser = await prisma.tripUser.findUnique({
       where: {
         userId_tripId: {
           userId: token.id as string,
-          tripId
-        }
-      }
+          tripId,
+        },
+      },
     });
-    
+
     if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
-    
+
     const data = await request.json();
-    
+
     // Validate required fields
     if (!data.location || !data.address || !data.arrivalDate || !data.departureDate) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
-    
+
     // Create new stay
     const newStay = await prisma.stay.create({
       data: {
@@ -55,13 +55,13 @@ export async function POST(request: NextRequest, context: { params: { id: string
         arrivalNotes: data.arrivalNotes || null,
         departureNotes: data.departureNotes || null,
         notes: data.notes || null,
-        trip: { connect: { id: tripId } }
+        trip: { connect: { id: tripId } },
       },
     });
-    
+
     return NextResponse.json(newStay, { status: 201 });
-  } catch (error) {
-    console.error('Error creating stay:', error);
+  } catch (_error) {
+    console.error('Error creating stay:', _error);
     return NextResponse.json({ error: 'Failed to create stay' }, { status: 500 });
   }
 }
@@ -72,39 +72,39 @@ export async function GET(request: NextRequest, context: { params: { id: string 
   try {
     // Get the user's session token
     const token = await getToken({ req: request });
-    
+
     if (!token || !token.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     const tripId = id;
-    
+
     // Check if trip exists
     const trip = await prisma.trip.findUnique({
       where: { id: tripId },
-      include: { stays: true }
+      include: { stays: true },
     });
-    
+
     if (!trip) {
       return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
     }
-    
+
     // Check if the user has access to this trip via TripUser relationship
     const tripUser = await prisma.tripUser.findUnique({
       where: {
         userId_tripId: {
           userId: token.id as string,
-          tripId
-        }
-      }
+          tripId,
+        },
+      },
     });
-    
+
     if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
-    
+
     return NextResponse.json(trip.stays);
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to fetch stays' }, { status: 500 });
   }
 }

@@ -21,17 +21,17 @@ const InviteUserForm = ({ tripId }: InviteUserFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Basic email validation
     if (!email || !email.includes('@')) {
       setError('Please enter a valid email address');
       return;
     }
-    
+
     try {
       setIsSubmitting(true);
       setError(null);
-      
+
       const response = await fetch(`/api/trips/${tripId}/invite`, {
         method: 'POST',
         headers: {
@@ -39,12 +39,12 @@ const InviteUserForm = ({ tripId }: InviteUserFormProps) => {
         },
         body: JSON.stringify({ email }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to send invitation');
       }
-      
+
       // Success!
       setSuccess(true);
       setEmail('');
@@ -57,11 +57,19 @@ const InviteUserForm = ({ tripId }: InviteUserFormProps) => {
 
   return (
     <div className="dropdown dropdown-end">
-      <div tabIndex={0} role="button" className="btn btn-sm btn-ghost gap-2" aria-label="Invite users">
+      <div
+        tabIndex={0}
+        role="button"
+        className="btn btn-sm btn-ghost gap-2"
+        aria-label="Invite users"
+      >
         <UserPlus className="h-4 w-4" />
         <span>Invite</span>
       </div>
-      <div tabIndex={0} className="dropdown-content z-[1] card card-compact shadow bg-base-200 w-64">
+      <div
+        tabIndex={0}
+        className="dropdown-content z-[1] card card-compact shadow bg-base-200 w-64"
+      >
         <div className="card-body">
           <h3 className="card-title text-sm">Invite to this Trip</h3>
           <form onSubmit={handleSubmit} className="space-y-2">
@@ -78,8 +86,8 @@ const InviteUserForm = ({ tripId }: InviteUserFormProps) => {
                   className="input input-bordered input-sm w-full pr-10"
                   disabled={isSubmitting}
                 />
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="absolute right-1 top-1/2 -translate-y-1/2 btn btn-sm btn-primary btn-circle"
                   disabled={isSubmitting || !email}
                   aria-label="Send invitation"
@@ -92,11 +100,9 @@ const InviteUserForm = ({ tripId }: InviteUserFormProps) => {
                 </button>
               </div>
             </div>
-            
-            {error && (
-              <div className="text-error text-xs">{error}</div>
-            )}
-            
+
+            {error && <div className="text-error text-xs">{error}</div>}
+
             {success && (
               <div className="alert alert-success py-2 text-xs">
                 <span>Invitation sent successfully!</span>

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { signIn } from "next-auth/react";
-import { useState } from "react";
-import { Map, Car, CheckCircle2 } from "lucide-react";
+import { signIn } from 'next-auth/react';
+import { useState } from 'react';
+import { Map, Car, CheckCircle2 } from 'lucide-react';
 
 export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,8 +10,8 @@ export default function SignIn() {
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
-      await signIn("google", { callbackUrl: "/" });
-    } catch (error) {
+      await signIn('google', { callbackUrl: '/' });
+    } catch (_error) {
       setIsLoading(false);
     }
   };
@@ -20,7 +20,7 @@ export default function SignIn() {
     <main className="h-full flex items-center justify-center relative overflow-hidden p-4 sm:p-6 bg-gradient-to-br from-accent/5 via-base-200 to-accent/10">
       {/* Background patterns */}
       <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10"></div>
-      
+
       {/* Content */}
       <div className="w-full max-w-md sm:max-w-lg md:max-w-2xl h-full relative z-10 flex flex-col justify-around py-12 sm:py-16">
         {/* Hero Text */}
@@ -30,10 +30,10 @@ export default function SignIn() {
             <span className="sm:inline">Beautifully </span>Organized
           </h1>
           <p className="text-base sm:text-lg text-base-content/80 mb-6">
-            StayLinker helps you visualize your travel plans by connecting stays
-            and showing the journeys between them.
+            StayLinker helps you visualize your travel plans by connecting stays and showing the
+            journeys between them.
           </p>
-          
+
           {/* Benefits */}
           <div className="flex justify-center gap-6 mb-8">
             <div className="flex flex-col items-center gap-2">
@@ -56,7 +56,7 @@ export default function SignIn() {
             </div>
           </div>
         </header>
-        
+
         {/* Sign In Button (at the bottom) */}
         <div className="text-center">
           <button
