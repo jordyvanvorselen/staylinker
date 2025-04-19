@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Stay } from '../../types';
 import { format } from 'date-fns';
-import { Calendar } from 'lucide-react';
+import { Calendar, Edit } from 'lucide-react';
+import Link from 'next/link';
 
 interface StayCardProps {
   stay: Stay;
@@ -38,13 +39,28 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
 
   return (
     <div
-      className="card bg-base-200/30 shadow-md hover:shadow-xl active:shadow-sm transition-all duration-300 cursor-pointer overflow-hidden rounded-xl ring-1 ring-base-300 hover:ring-primary/30 active:ring-primary/50 hover:translate-y-[-2px] active:translate-y-[1px] focus:outline-none focus:ring-2 focus:ring-primary/40"
+      className="card bg-base-200/30 shadow-md hover:shadow-xl active:shadow-sm transition-all duration-300 cursor-pointer overflow-hidden rounded-xl ring-1 ring-base-300 hover:ring-primary/30 active:ring-primary/50 hover:translate-y-[-2px] active:translate-y-[1px] focus:outline-none focus:ring-2 focus:ring-primary/40 relative"
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       aria-label={`Stay at ${stay.location}`}
       role="button"
     >
+      {/* Edit Button - Positioned absolutely to avoid affecting the card click */}
+      <div 
+        className="absolute top-2 right-2 z-10"
+        onClick={(e) => e.stopPropagation()} // Prevent card click when edit button is clicked
+      >
+        <Link
+          href={`/trips/${stay.tripId}/stays/${stay.id}/edit`}
+          className="btn btn-circle btn-sm btn-ghost hover:bg-base-300"
+          aria-label={`Edit stay at ${stay.location}`}
+          tabIndex={0}
+        >
+          <Edit className="h-4 w-4" />
+        </Link>
+      </div>
+
       {/* Arrival Section at Top */}
       <div className="bg-gradient-to-br from-accent/20 via-accent/5 to-base-200/30 py-3 px-6 flex flex-col items-center border-b border-base-300/20">
         <span className="text-xs uppercase tracking-wider text-gray-500 mb-1">Arrival</span>

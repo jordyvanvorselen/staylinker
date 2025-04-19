@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Stay } from '../../types';
-import { CarFront, ExternalLink } from 'lucide-react';
+import { CarFront, ExternalLink, AlertTriangle } from 'lucide-react';
 import DashedConnector from '../ui/DashedConnector';
 import GapIndicator from './GapIndicator';
 
@@ -14,6 +14,7 @@ interface StayDistanceProps {
 interface DistanceData {
   distance: string;
   duration: string;
+  routeFound: boolean;
   error?: string;
 }
 
@@ -96,7 +97,8 @@ const StayDistance = ({ originStay, destinationStay }: StayDistanceProps) => {
     );
   }
 
-  if (error || (distanceData && distanceData.error)) {
+  // Handle network/API errors
+  if (error && !distanceData) {
     return (
       <div className="py-4 text-center text-sm text-error">
         <span>Unable to calculate travel distance</span>
@@ -124,25 +126,39 @@ const StayDistance = ({ originStay, destinationStay }: StayDistanceProps) => {
     }
   };
 
+  // Display button for both successful routes and not-found routes
   return (
     <div className="flex flex-col items-center justify-center py-4 px-2">
       <DashedConnector height={8} spacing="mb-2" />
 
       <button
-        className="flex items-center gap-2 bg-gradient-to-r from-primary/10 to-base-100/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm hover:shadow-md hover:from-primary/15 hover:to-base-100/90 transition-all duration-300 ring-1 ring-base-300 hover:ring-primary/30"
+        className={`flex items-center gap-2 rounded-full px-4 py-2 shadow-sm hover:shadow-md transition-all duration-300 ring-1 ${
+          distanceData.routeFound
+            ? 'bg-gradient-to-r from-primary/10 to-base-100/80 ring-base-300 hover:ring-primary/30 hover:from-primary/15 hover:to-base-100/90'
+            : 'bg-gradient-to-r from-warning/10 to-base-100/80 ring-warning/30 hover:ring-warning/50 hover:from-warning/15 hover:to-base-100/90'
+        }`}
         onClick={handleMapsClick}
         onKeyDown={handleKeyDown}
         tabIndex={0}
         aria-label={`View route from ${originStay.location} to ${destinationStay.location} on Google Maps`}
         role="link"
       >
-        <CarFront className="h-5 w-5 text-primary" />
+        {distanceData.routeFound ? (
+          <CarFront className="h-5 w-5 text-primary" />
+        ) : (
+          <AlertTriangle className="h-5 w-5 text-warning" />
+        )}
+        
         <div className="flex flex-col">
           <div className="flex items-center gap-1">
             <span className="text-sm font-medium">{distanceData.distance}</span>
             <ExternalLink className="h-3 w-3 text-gray-500" />
           </div>
-          <span className="text-xs text-gray-500">{distanceData.duration}</span>
+          <span className="text-xs text-gray-500">
+            {distanceData.routeFound 
+              ? distanceData.duration 
+              : 'No direct route found - Check Google Maps'}
+          </span>
         </div>
       </button>
 

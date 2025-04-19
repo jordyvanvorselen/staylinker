@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 interface DistanceResponse {
   duration: string;
   distance: string;
+  routeFound: boolean;
   error?: string;
 }
 
@@ -18,16 +19,18 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // API key should be stored in environment variables for security
+  const apiKey = process.env['GOOGLE_MAPS_API_KEY'];
+
+  if (!apiKey) {
+    console.error('Google Maps API key not found');
+    return NextResponse.json(
+      { error: 'Google Maps API key is not configured' },
+      { status: 500 },
+    );
+  }
+
   try {
-    // API key should be stored in environment variables for security
-    const apiKey = process.env['GOOGLE_MAPS_API_KEY'];
-
-    if (!apiKey) {
-      console.error('Google Maps API key not found');
-      // For development purposes, return mock data if API key is not available
-      return NextResponse.json(getMockDrivingData(origin, destination));
-    }
-
     const response = await fetch(
       `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`,
       { method: 'GET' },
@@ -45,47 +48,34 @@ export async function GET(request: NextRequest) {
 
     const result = data.rows[0].elements[0];
 
+    // Handle ZERO_RESULTS and other non-OK statuses gracefully
     if (result.status !== 'OK') {
-      throw new Error(`No route found: ${result.status}`);
+      console.log(`No route found between locations: ${result.status}`);
+      return NextResponse.json({
+        distance: 'Unknown distance',
+        duration: 'Unable to calculate',
+        routeFound: false,
+        error: `No direct route available (${result.status})`
+      });
     }
 
     const distanceResponse: DistanceResponse = {
       duration: result.duration.text,
       distance: result.distance.text,
+      routeFound: true
     };
 
     return NextResponse.json(distanceResponse);
   } catch (error) {
     console.error('Error calculating distance:', error);
-
-    // For development purposes, return mock data if there's an error
-    return NextResponse.json(getMockDrivingData(origin, destination));
+    return NextResponse.json(
+      { 
+        error: 'Failed to calculate distance',
+        distance: 'Error',
+        duration: 'Error',
+        routeFound: false
+      },
+      { status: 500 }
+    );
   }
-}
-
-// Helper function to generate mock data for development without API key
-function getMockDrivingData(origin: string, destination: string): DistanceResponse {
-  // Generate pseudorandom but consistent duration between 1-8 hours based on strings
-  const hash = (str: string) => {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = (hash << 5) - hash + str.charCodeAt(i);
-      hash = hash & hash; // Convert to 32bit integer
-    }
-    return Math.abs(hash);
-  };
-
-  const combinedHash = hash(origin + destination);
-  const hours = 1 + (combinedHash % 8); // 1-8 hours
-  const minutes = combinedHash % 60; // 0-59 minutes
-
-  const durationText =
-    hours > 1 ? `${hours} hours ${minutes} mins` : `${hours} hour ${minutes} mins`;
-
-  const distance = Math.round(50 + (combinedHash % 500)); // 50-550 km
-
-  return {
-    duration: durationText,
-    distance: `${distance} km`,
-  };
 }
