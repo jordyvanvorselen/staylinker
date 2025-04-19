@@ -4,7 +4,7 @@ import { getToken } from 'next-auth/jwt';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string; stayId: string } }
+  { params }: { params: Promise<{ id: string; stayId: string }> }
 ) {
   try {
     // Get the user's session token
@@ -14,8 +14,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const tripId = params.id;
-    const stayId = params.stayId;
+    const { id: tripId, stayId } = await params;
 
     // Check if trip exists
     const trip = await prisma.trip.findUnique({
@@ -61,7 +60,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string; stayId: string } }
+  { params }: { params: Promise<{ id: string; stayId: string }> }
 ) {
   try {
     // Get the user's session token
@@ -71,8 +70,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const tripId = params.id;
-    const stayId = params.stayId;
+    const { id: tripId, stayId } = await params;
 
     // Check if trip exists
     const trip = await prisma.trip.findUnique({
@@ -139,7 +137,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; stayId: string } }
+  { params }: { params: Promise<{ id: string; stayId: string }> }
 ) {
   try {
     // Get the user's session token
@@ -149,8 +147,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const tripId = params.id;
-    const stayId = params.stayId;
+    const { id: tripId, stayId } = await params;
 
     // Check if trip exists
     const trip = await prisma.trip.findUnique({
