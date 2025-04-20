@@ -125,6 +125,8 @@ export async function PUT(
         arrivalNotes: data.arrivalNotes || null,
         departureNotes: data.departureNotes || null,
         notes: data.notes || null,
+        arrivalConfirmed: data.arrivalConfirmed === true,
+        departureConfirmed: data.departureConfirmed === true,
       },
     });
 

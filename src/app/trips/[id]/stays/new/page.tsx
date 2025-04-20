@@ -23,6 +23,8 @@ export default function NewStayPage() {
     arrivalNotes: '',
     departureNotes: '',
     notes: '',
+    arrivalConfirmed: false,
+    departureConfirmed: false,
   });
 
   // Handle text input changes
@@ -31,6 +33,14 @@ export default function NewStayPage() {
     setFormData(prev => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  // Handle checkbox toggle changes
+  const handleToggleChange = (name: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: !prev[name as keyof typeof prev],
     }));
   };
 
@@ -297,9 +307,73 @@ export default function NewStayPage() {
               </div>
             )}
 
-            {/* Step 3: Stay Notes */}
+            {/* Step 3: Details */}
             {step === 3 && (
               <div className="space-y-4">
+                {/* Arrival Information */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="form-control">
+                      <label className="label cursor-pointer">
+                        <span className="label-text mr-4 font-medium">Arrival Confirmed</span>
+                        <input 
+                          type="checkbox" 
+                          className="toggle toggle-success" 
+                          checked={formData.arrivalConfirmed}
+                          onChange={() => handleToggleChange('arrivalConfirmed')}
+                          aria-label="Confirm arrival"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="form-control w-full">
+                    <label className="label" htmlFor="arrivalNotes">
+                      <span className="label-text font-medium">Arrival Notes</span>
+                    </label>
+                    <textarea
+                      id="arrivalNotes"
+                      name="arrivalNotes"
+                      value={formData.arrivalNotes}
+                      onChange={handleInputChange}
+                      placeholder="Special instructions for arrival, contact info, etc."
+                      className="textarea textarea-bordered h-20 w-full"
+                    />
+                  </div>
+                </div>
+
+                {/* Departure Information */}
+                <div className="space-y-4 mt-8">
+                  <div className="flex items-center justify-between">
+                    <div className="form-control">
+                      <label className="label cursor-pointer">
+                        <span className="label-text mr-4 font-medium">Departure Confirmed</span>
+                        <input 
+                          type="checkbox" 
+                          className="toggle toggle-success" 
+                          checked={formData.departureConfirmed}
+                          onChange={() => handleToggleChange('departureConfirmed')}
+                          aria-label="Confirm departure"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="form-control w-full">
+                    <label className="label" htmlFor="departureNotes">
+                      <span className="label-text font-medium">Departure Notes</span>
+                    </label>
+                    <textarea
+                      id="departureNotes"
+                      name="departureNotes"
+                      value={formData.departureNotes}
+                      onChange={handleInputChange}
+                      placeholder="Special instructions for departure, checkout procedures, etc."
+                      className="textarea textarea-bordered h-20 w-full"
+                    />
+                  </div>
+                </div>
+
                 <div className="form-control w-full">
                   <label className="label" htmlFor="notes">
                     <span className="label-text font-medium">Stay Notes</span>

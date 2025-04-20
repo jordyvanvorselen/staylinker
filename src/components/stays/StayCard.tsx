@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Stay } from '../../types';
 import { format } from 'date-fns';
-import { Calendar, Edit } from 'lucide-react';
+import { Calendar, Edit, CheckCircle, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 interface StayCardProps {
@@ -62,16 +62,23 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
       </div>
 
       {/* Arrival Section at Top */}
-      <div className="bg-gradient-to-br from-accent/20 via-accent/5 to-base-200/30 py-3 px-6 flex flex-col items-center border-b border-base-300/20">
+      <div className="bg-gradient-to-br from-accent/20 via-accent/5 to-base-200/30 py-3 px-6 flex flex-col items-center border-b border-base-300/20 relative">
         <span className="text-xs uppercase tracking-wider text-gray-500 mb-1">Arrival</span>
         <div className="flex items-center gap-2 mb-1">
           <Calendar className="h-4 w-4 text-accent" />
           <span className="font-medium text-md">{formatDate(stay.arrivalDate)}</span>
+          {stay.arrivalConfirmed ? (
+            <CheckCircle className="h-4 w-4 text-accent ml-1" aria-label="Arrival confirmed" />
+          ) : (
+            <Clock className="h-4 w-4 text-orange-400 opacity-60 ml-1" aria-label="Arrival not confirmed yet" />
+          )}
         </div>
 
         {stay.arrivalNotes && (
           <div className="mt-2 w-full px-2">
-            <p className="text-xs text-left text-gray-500 italic">{stay.arrivalNotes}</p>
+            <p className={`text-xs text-left text-gray-500 italic ${stay.arrivalConfirmed ? 'pl-4 border-l-2 border-accent' : ''}`}>
+              {stay.arrivalNotes}
+            </p>
           </div>
         )}
       </div>
@@ -114,11 +121,18 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
         <div className="flex items-center gap-2 mb-1">
           <Calendar className="h-4 w-4 text-primary" />
           <span className="font-medium text-md">{formatDate(stay.departureDate)}</span>
+          {stay.departureConfirmed ? (
+            <CheckCircle className="h-4 w-4 text-primary ml-1" aria-label="Departure confirmed" />
+          ) : (
+            <Clock className="h-4 w-4 text-orange-400 opacity-60 ml-1" aria-label="Departure not confirmed yet" />
+          )}
         </div>
 
         {stay.departureNotes && (
           <div className="mt-2 w-full px-2">
-            <p className="text-xs text-left text-gray-500 italic">{stay.departureNotes}</p>
+            <p className={`text-xs text-left text-gray-500 italic ${stay.departureConfirmed ? 'pl-4 border-l-2 border-primary' : ''}`}>
+              {stay.departureNotes}
+            </p>
           </div>
         )}
       </div>

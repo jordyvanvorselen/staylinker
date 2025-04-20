@@ -7,6 +7,8 @@ export interface Stay {
   notes?: string; // Optional field for general information
   arrivalNotes?: string; // Optional notes specific to arrival
   departureNotes?: string; // Optional notes specific to departure
+  arrivalConfirmed?: boolean; // Optional field to track if arrival is confirmed
+  departureConfirmed?: boolean; // Optional field to track if departure is confirmed
   tripId?: string; // Reference to the parent trip
   createdAt?: string;
   updatedAt?: string;

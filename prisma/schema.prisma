@@ -89,20 +89,22 @@ model TripUser {
 }
 
 model Stay {
-  id             String   @id @default(uuid())
-  location       String   // City/village name
-  address        String
-  arrivalDate    DateTime // Store as DateTime
-  departureDate  DateTime // Store as DateTime
-  notes          String?  // Optional field for general information
-  arrivalNotes   String?  // Optional notes specific to arrival
-  departureNotes String?  // Optional notes specific to departure
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id               String   @id @default(uuid())
+  location         String   // City/village name
+  address          String
+  arrivalDate      DateTime // Store as DateTime
+  departureDate    DateTime // Store as DateTime
+  notes            String?  // Optional field for general information
+  arrivalNotes     String?  // Optional notes specific to arrival
+  departureNotes   String?  // Optional notes specific to departure
+  arrivalConfirmed Boolean  @default(false) // Non-nullable with default false
+  departureConfirmed Boolean @default(false) // Non-nullable with default false
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
   
   // Relationship to Trip
-  trip           Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  tripId         String
+  trip             Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripId           String
 }
 
 // TripInvitation model for inviting users to trips
@@ -125,4 +127,3 @@ model TripInvitation {
   invitee   User?    @relation("InvitedUser", fields: [inviteeId], references: [id], onDelete: SetNull)
   inviteeId String?
 }
-
