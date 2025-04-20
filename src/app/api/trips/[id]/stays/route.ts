@@ -38,6 +38,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
+    // Check if user has the required permission (must be a member, not a guest)
+    if (tripUser.role === 'guest') {
+      return NextResponse.json(
+        { error: 'Guests can only view trip information but cannot create stays' },
+        { status: 403 },
+      );
+    }
+
     const data = await request.json();
 
     // Validate required fields

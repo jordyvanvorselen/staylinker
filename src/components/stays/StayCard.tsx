@@ -10,9 +10,10 @@ import TravelDateSection from './TravelDateSection';
 interface StayCardProps {
   stay: Stay;
   onClick?: (_stay: Stay) => void;
+  isGuest?: boolean;
 }
 
-const StayCard = ({ stay, onClick }: StayCardProps) => {
+const StayCard = ({ stay, onClick, isGuest = false }: StayCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleClick = () => {
@@ -72,19 +73,21 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
       role="button"
     >
       {/* Edit Button - Positioned absolutely to avoid affecting the card click */}
-      <div
-        className="absolute top-2 right-2 z-10"
-        onClick={e => e.stopPropagation()} // Prevent card click when edit button is clicked
-      >
-        <Link
-          href={`/trips/${stay.tripId}/stays/${stay.id}/edit`}
-          className="btn btn-circle btn-sm btn-ghost hover:bg-base-300"
-          aria-label={`Edit stay at ${stay.location}`}
-          tabIndex={0}
+      {!isGuest && (
+        <div
+          className="absolute top-2 right-2 z-10"
+          onClick={e => e.stopPropagation()} // Prevent card click when edit button is clicked
         >
-          <Edit className="h-4 w-4" />
-        </Link>
-      </div>
+          <Link
+            href={`/trips/${stay.tripId}/stays/${stay.id}/edit`}
+            className="btn btn-circle btn-sm btn-ghost hover:bg-base-300"
+            aria-label={`Edit stay at ${stay.location}`}
+            tabIndex={0}
+          >
+            <Edit className="h-4 w-4" />
+          </Link>
+        </div>
+      )}
 
       {/* Arrival Section at Top */}
       <TravelDateSection
@@ -152,8 +155,6 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
                     e.stopPropagation();
                     setIsExpanded(!isExpanded);
                   }}
-                  aria-expanded={isExpanded}
-                  aria-controls="notes-content"
                 >
                   {isExpanded ? 'Show less' : 'Show more'}
                 </button>

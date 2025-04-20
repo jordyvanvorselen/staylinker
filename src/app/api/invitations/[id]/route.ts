@@ -69,6 +69,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           data: {
             user: { connect: { id: token.id as string } },
             trip: { connect: { id: invitation.tripId } },
+            // Set the role based on the invitation role (guest or member)
+            role: invitation.role || 'member',
           },
         });
       }

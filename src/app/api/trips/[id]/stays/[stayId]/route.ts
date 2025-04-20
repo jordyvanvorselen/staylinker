@@ -98,6 +98,14 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
+    // Check if user has the required permission (must be a member, not a guest)
+    if (tripUser.role === 'guest') {
+      return NextResponse.json(
+        { error: 'Guests can only view trip information but cannot edit stays' },
+        { status: 403 },
+      );
+    }
+
     // Get stay to confirm it exists and belongs to this trip
     const existingStay = await prisma.stay.findUnique({
       where: {
@@ -209,24 +217,32 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    // Get stay to confirm it exists and belongs to this trip
-    const existingStay = await prisma.stay.findUnique({
+    // Check if user has the required permission (must be a member, not a guest)
+    if (tripUser.role === 'guest') {
+      return NextResponse.json(
+        { error: 'Guests can only view trip information but cannot delete stays' },
+        { status: 403 },
+      );
+    }
+
+    // Check if stay exists and belongs to this trip
+    const stay = await prisma.stay.findUnique({
       where: {
         id: stayId,
         tripId,
       },
     });
 
-    if (!existingStay) {
+    if (!stay) {
       return NextResponse.json({ error: 'Stay not found' }, { status: 404 });
     }
 
-    // Delete stay (contacts will be deleted automatically due to CASCADE)
+    // Delete the stay (will cascade delete related contacts)
     await prisma.stay.delete({
       where: { id: stayId },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ message: 'Stay deleted successfully' });
   } catch (error) {
     console.error('Error deleting stay:', error);
     return NextResponse.json({ error: 'Failed to delete stay' }, { status: 500 });

@@ -17,6 +17,7 @@ export default function TripDetailPage() {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string>('guest'); // Default to guest for security
 
   useEffect(() => {
     const fetchTripDetails = async () => {
@@ -32,6 +33,12 @@ export default function TripDetailPage() {
 
         const data = await response.json();
         setTrip(data);
+
+        // Use the currentUserRole sent directly from the API
+        if (data.currentUserRole) {
+          console.log('Current user role from API:', data.currentUserRole);
+          setUserRole(data.currentUserRole);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
       } finally {
@@ -44,12 +51,15 @@ export default function TripDetailPage() {
     }
   }, [tripId]);
 
+  const isGuest = userRole === 'guest';
+
+  console.log('Current user role:', userRole);
+  console.log('Is guest?', isGuest);
+
   const handleStayClick = (stay: Stay) => {
     // In a future implementation, this would navigate to the stay detail page
     console.log('Stay clicked:', stay);
   };
-
-  // No longer needed as we use Link component
 
   if (isLoading) {
     return (
@@ -80,8 +90,6 @@ export default function TripDetailPage() {
     );
   }
 
-  // Date formatting is handled by components
-
   return (
     <div className="container mx-auto p-4">
       {/* Header with back button */}
@@ -96,16 +104,20 @@ export default function TripDetailPage() {
         </Link>
 
         <div className="flex items-center gap-2">
-          <InviteUserForm tripId={tripId} />
+          {!isGuest && (
+            <>
+              <InviteUserForm tripId={tripId} />
 
-          <Link
-            href={`/trips/${tripId}/stays/new`}
-            className="btn btn-primary btn-sm"
-            aria-label="Add a new stay"
-          >
-            <Plus className="h-4 w-4 mr-1" />
-            Add Stay
-          </Link>
+              <Link
+                href={`/trips/${tripId}/stays/new`}
+                className="btn btn-primary btn-sm"
+                aria-label="Add a new stay"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add Stay
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
@@ -117,17 +129,22 @@ export default function TripDetailPage() {
             </div>
           </div>
           <h3 className="font-medium text-lg mb-2">No stays found</h3>
-          <p className="text-gray-600 mb-6">Add your first stay to this trip!</p>
-          <div className="flex justify-center">
-            <Link
-              href={`/trips/${tripId}/stays/new`}
-              className="btn btn-primary gap-2 hover:shadow-md active:scale-95 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-primary-focus focus:ring-offset-2"
-              aria-label="Add your first stay"
-            >
-              <Plus className="h-5 w-5" />
-              Add First Stay
-            </Link>
-          </div>
+          <p className="text-gray-600 mb-6">
+            {isGuest ? "This trip doesn't have any stays yet" : 'Add your first stay to this trip!'}
+          </p>
+
+          {!isGuest && (
+            <div className="flex justify-center">
+              <Link
+                href={`/trips/${tripId}/stays/new`}
+                className="btn btn-primary gap-2 hover:shadow-md active:scale-95 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-primary-focus focus:ring-offset-2"
+                aria-label="Add your first stay"
+              >
+                <Plus className="h-5 w-5" />
+                Add First Stay
+              </Link>
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex flex-col w-full max-w-4xl mx-auto">
@@ -136,7 +153,7 @@ export default function TripDetailPage() {
             .sort((a, b) => new Date(a.arrivalDate).getTime() - new Date(b.arrivalDate).getTime())
             .map((stay, index, sortedStays) => (
               <div key={stay.id}>
-                <StayCard stay={stay} onClick={handleStayClick} />
+                <StayCard stay={stay} onClick={handleStayClick} isGuest={isGuest} />
 
                 {/* Show distance to next stay if there is one */}
                 {index < sortedStays.length - 1 && sortedStays[index + 1] && (
@@ -146,7 +163,7 @@ export default function TripDetailPage() {
             ))}
 
           {/* Add the 'Add New Stay' prompt at the end of the timeline */}
-          <AddStayPrompt tripId={tripId} />
+          {!isGuest && <AddStayPrompt tripId={tripId} />}
         </div>
       )}
     </div>

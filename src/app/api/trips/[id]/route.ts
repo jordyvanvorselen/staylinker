@@ -21,6 +21,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             contacts: true,
           },
         },
+        users: {
+          select: {
+            role: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -42,7 +54,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    return NextResponse.json(trip);
+    // Add the current user's role to the response
+    const responseData = {
+      ...trip,
+      currentUserRole: tripUser.role || 'member', // Include the current user's role
+    };
+
+    return NextResponse.json(responseData);
   } catch (_error) {
     return NextResponse.json({ error: 'Failed to fetch trip' }, { status: 500 });
   }
@@ -82,6 +100,14 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    // Check if user has the required permission (must be a member, not a guest)
+    if (tripUser.role === 'guest') {
+      return NextResponse.json(
+        { error: 'Guests can only view trip information but cannot edit trips' },
+        { status: 403 },
+      );
     }
 
     // Check if user is the owner (only owners can update trip details)
@@ -142,6 +168,14 @@ export async function DELETE(
 
     if (!tripUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    // Check if user has the required permission (must be a member, not a guest)
+    if (tripUser.role === 'guest') {
+      return NextResponse.json(
+        { error: 'Guests can only view trip information but cannot delete trips' },
+        { status: 403 },
+      );
     }
 
     // Check if user is the owner (only owners can delete trips)

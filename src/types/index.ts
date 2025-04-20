@@ -32,6 +32,7 @@ export interface User {
 
 export interface TripUser {
   user: User;
+  role?: string; // 'member' or 'guest'
 }
 
 export interface Trip {

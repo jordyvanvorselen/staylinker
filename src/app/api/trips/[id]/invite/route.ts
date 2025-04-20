@@ -38,6 +38,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
+    // Check if user has the required permission (must be a member, not a guest)
+    if (tripUser.role === 'guest') {
+      return NextResponse.json(
+        { error: 'Guests cannot invite other users to trips' },
+        { status: 403 },
+      );
+    }
+
     // Only trip owner should be able to send invites
     if (trip.ownerId !== token.id) {
       return NextResponse.json(
@@ -79,6 +87,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         sender: { connect: { id: token.id as string } },
         // Connect the invitee if they exist in the system
         ...(targetUser ? { invitee: { connect: { id: targetUser.id } } } : {}),
+        // Store the role information (guest or regular member)
+        role: data.isGuest ? 'guest' : 'member',
       },
     });
 
