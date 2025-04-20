@@ -52,7 +52,7 @@ const TravelDateSection = ({
       
       {notes && (
         <div className="mt-1 w-full px-2">
-          <p className={`text-xs text-left text-gray-500 italic ${!isArrival && confirmed ? 'pl-4 border-l-2 border-primary' : ''}`}>
+          <p className="text-xs text-left text-gray-500 italic">
             {notes}
           </p>
         </div>
