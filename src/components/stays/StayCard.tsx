@@ -68,7 +68,7 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
           <Calendar className="h-4 w-4 text-accent" />
           <span className="font-medium text-md">{formatDate(stay.arrivalDate)}</span>
           {stay.arrivalConfirmed ? (
-            <CheckCircle className="h-4 w-4 text-accent ml-1" aria-label="Arrival confirmed" />
+            <CheckCircle className="h-4 w-4 text-green-500 ml-1" aria-label="Arrival confirmed" />
           ) : (
             <Clock className="h-4 w-4 text-orange-400 opacity-60 ml-1" aria-label="Arrival not confirmed yet" />
           )}
@@ -122,7 +122,7 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
           <Calendar className="h-4 w-4 text-primary" />
           <span className="font-medium text-md">{formatDate(stay.departureDate)}</span>
           {stay.departureConfirmed ? (
-            <CheckCircle className="h-4 w-4 text-primary ml-1" aria-label="Departure confirmed" />
+            <CheckCircle className="h-4 w-4 text-green-500 ml-1" aria-label="Departure confirmed" />
           ) : (
             <Clock className="h-4 w-4 text-orange-400 opacity-60 ml-1" aria-label="Departure not confirmed yet" />
           )}
