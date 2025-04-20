@@ -82,14 +82,14 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
         <meta name="apple-touch-fullscreen" content="yes" />
 
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
-        <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-152x152.png" />
+        <link rel="apple-touch-icon" href="/ios/192.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/ios/152.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/ios/180.png" />
+        <link rel="apple-touch-icon" sizes="167x167" href="/ios/167.png" />
 
-        <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72x72.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72x72.png" />
-        <link rel="mask-icon" href="/icons/icon-512x512.png" color="#4f46e5" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/ios/32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/ios/16.png" />
+        <link rel="mask-icon" href="/ios/512.png" color="#4f46e5" />
         <link rel="shortcut icon" href="/favicon.ico" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}>
