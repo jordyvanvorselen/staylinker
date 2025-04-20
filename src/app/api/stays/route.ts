@@ -11,14 +11,14 @@ export async function GET(request: NextRequest) {
     const queryOptions: any = {
       orderBy: {
         arrivalDate: 'asc',
-      }
+      },
     };
-    
+
     // Only add where clause if tripId is provided
     if (tripId) {
       queryOptions.where = { tripId };
     }
-    
+
     const stays = await prisma.stay.findMany(queryOptions);
 
     return NextResponse.json(stays);

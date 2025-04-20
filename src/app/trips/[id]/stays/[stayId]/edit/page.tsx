@@ -32,7 +32,7 @@ export default function EditStayPage() {
     departureConfirmed: false,
     contacts: [] as Contact[],
   });
-  
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -59,7 +59,7 @@ export default function EditStayPage() {
         }
 
         const data = await response.json();
-        
+
         setFormData({
           location: data.location,
           address: data.address,
@@ -177,8 +177,10 @@ export default function EditStayPage() {
   // Handle checkbox toggle changes
   const handleToggleChange = (name: string) => {
     // For arrival/departure confirmation, only allow toggling if time is set
-    if ((name === 'arrivalConfirmed' && !formData.arrivalTime) || 
-        (name === 'departureConfirmed' && !formData.departureTime)) {
+    if (
+      (name === 'arrivalConfirmed' && !formData.arrivalTime) ||
+      (name === 'departureConfirmed' && !formData.departureTime)
+    ) {
       // If no time is set, always set confirmed to false
       setFormData(prev => ({
         ...prev,
@@ -186,7 +188,7 @@ export default function EditStayPage() {
       }));
       return;
     }
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: !prev[name as keyof typeof prev],
@@ -206,21 +208,21 @@ export default function EditStayPage() {
         return;
       }
     }
-    
+
     // When moving to step 3 (Details), ensure confirmation toggles are false if no time is set
     if (step === 2) {
       const updatedFormData = { ...formData };
-      
+
       // Reset arrival confirmation if no arrival time
       if (!updatedFormData.arrivalTime) {
         updatedFormData.arrivalConfirmed = false;
       }
-      
+
       // Reset departure confirmation if no departure time
       if (!updatedFormData.departureTime) {
         updatedFormData.departureConfirmed = false;
       }
-      
+
       setFormData(updatedFormData);
     }
 
@@ -339,7 +341,7 @@ export default function EditStayPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to Trip
         </Link>
-        
+
         <button
           onClick={() => setIsDeleteModalOpen(true)}
           className="btn btn-error btn-sm gap-2 hover:bg-error-focus active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-error-focus"
@@ -404,11 +406,7 @@ export default function EditStayPage() {
                 </div>
 
                 <div className="flex justify-end mt-6">
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={nextStep}
-                  >
+                  <button type="button" className="btn btn-primary" onClick={nextStep}>
                     Next
                   </button>
                 </div>
@@ -431,12 +429,12 @@ export default function EditStayPage() {
                       </label>
                       <DatePicker
                         selected={formData.arrivalDate}
-                        onChange={(date) => handleDateChange('arrivalDate', date)}
+                        onChange={date => handleDateChange('arrivalDate', date)}
                         className="input input-bordered w-full"
                         dateFormat="MMMM d, yyyy"
                       />
                     </div>
-                    
+
                     <div className="flex-1">
                       <label className="label">
                         <span className="label-text flex items-center gap-1">
@@ -446,14 +444,14 @@ export default function EditStayPage() {
                       </label>
                       <DatePicker
                         selected={formData.departureDate}
-                        onChange={(date) => handleDateChange('departureDate', date)}
+                        onChange={date => handleDateChange('departureDate', date)}
                         className="input input-bordered w-full"
                         dateFormat="MMMM d, yyyy"
                         minDate={formData.arrivalDate}
                       />
                     </div>
                   </div>
-                  
+
                   {/* Arrival Time section */}
                   <div className="flex flex-col md:flex-row gap-4">
                     <div className="form-control flex-1">
@@ -480,7 +478,7 @@ export default function EditStayPage() {
                         </label>
                       </div>
                     </div>
-                    
+
                     <div className="form-control flex-1">
                       <label className="label">
                         <span className="label-text">Departure Time (optional)</span>
@@ -508,18 +506,10 @@ export default function EditStayPage() {
                   </div>
 
                   <div className="flex justify-between mt-6">
-                    <button
-                      type="button"
-                      className="btn btn-ghost"
-                      onClick={prevStep}
-                    >
+                    <button type="button" className="btn btn-ghost" onClick={prevStep}>
                       Back
                     </button>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={nextStep}
-                    >
+                    <button type="button" className="btn btn-primary" onClick={nextStep}>
                       Next
                     </button>
                   </div>
@@ -570,18 +560,10 @@ export default function EditStayPage() {
                 </div>
 
                 <div className="flex justify-between mt-6">
-                  <button
-                    type="button"
-                    className="btn btn-ghost"
-                    onClick={prevStep}
-                  >
+                  <button type="button" className="btn btn-ghost" onClick={prevStep}>
                     Back
                   </button>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={nextStep}
-                  >
+                  <button type="button" className="btn btn-primary" onClick={nextStep}>
                     Next
                   </button>
                 </div>
@@ -603,8 +585,8 @@ export default function EditStayPage() {
                   <div className="bg-base-200/30 p-4 rounded-lg mb-4">
                     <h4 className="text-sm font-medium mb-2">Added Contacts:</h4>
                     <div className="space-y-2">
-                      {formData.contacts.map((contact) => (
-                        <div 
+                      {formData.contacts.map(contact => (
+                        <div
                           key={contact.id}
                           className="flex items-center justify-between bg-base-100 p-2 rounded-md"
                         >
@@ -653,7 +635,7 @@ export default function EditStayPage() {
                         placeholder="Contact name"
                       />
                     </div>
-                    
+
                     <div className="form-control">
                       <label className="label">
                         <span className="label-text">Phone Number</span>
@@ -667,7 +649,7 @@ export default function EditStayPage() {
                         placeholder="Phone number"
                       />
                     </div>
-                    
+
                     <button
                       type="button"
                       className="btn btn-secondary btn-sm w-full gap-1"
@@ -680,18 +662,10 @@ export default function EditStayPage() {
                 </div>
 
                 <div className="flex justify-between mt-6">
-                  <button
-                    type="button"
-                    className="btn btn-ghost"
-                    onClick={prevStep}
-                  >
+                  <button type="button" className="btn btn-ghost" onClick={prevStep}>
                     Back
                   </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary gap-2"
-                    disabled={isSubmitting}
-                  >
+                  <button type="submit" className="btn btn-primary gap-2" disabled={isSubmitting}>
                     <Save className="h-4 w-4" />
                     {isSubmitting ? 'Saving...' : 'Save Changes'}
                   </button>
@@ -718,11 +692,7 @@ export default function EditStayPage() {
               >
                 Cancel
               </button>
-              <button
-                onClick={handleDelete}
-                className="btn btn-error"
-                disabled={isDeleting}
-              >
+              <button onClick={handleDelete} className="btn btn-error" disabled={isDeleting}>
                 {isDeleting ? (
                   <>
                     <span className="loading loading-spinner loading-xs"></span>
@@ -734,8 +704,8 @@ export default function EditStayPage() {
               </button>
             </div>
           </div>
-          <div 
-            className="modal-backdrop bg-black opacity-30" 
+          <div
+            className="modal-backdrop bg-black opacity-30"
             onClick={() => !isDeleting && setIsDeleteModalOpen(false)}
           ></div>
         </div>

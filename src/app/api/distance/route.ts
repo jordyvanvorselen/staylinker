@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 interface DistanceResponse {
   duration: string;
   distance: string;
+  durationInSeconds: number;
   routeFound: boolean;
   error?: string;
 }
@@ -24,10 +25,7 @@ export async function GET(request: NextRequest) {
 
   if (!apiKey) {
     console.error('Google Maps API key not found');
-    return NextResponse.json(
-      { error: 'Google Maps API key is not configured' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Google Maps API key is not configured' }, { status: 500 });
   }
 
   try {
@@ -54,28 +52,31 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         distance: 'Unknown distance',
         duration: 'Unable to calculate',
+        durationInSeconds: 0,
         routeFound: false,
-        error: `No direct route available (${result.status})`
+        error: `No direct route available (${result.status})`,
       });
     }
 
     const distanceResponse: DistanceResponse = {
       duration: result.duration.text,
       distance: result.distance.text,
-      routeFound: true
+      durationInSeconds: result.duration.value,
+      routeFound: true,
     };
 
     return NextResponse.json(distanceResponse);
   } catch (error) {
     console.error('Error calculating distance:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to calculate distance',
         distance: 'Error',
         duration: 'Error',
-        routeFound: false
+        durationInSeconds: 0,
+        routeFound: false,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

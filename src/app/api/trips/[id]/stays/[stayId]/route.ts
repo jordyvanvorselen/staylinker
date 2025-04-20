@@ -4,7 +4,7 @@ import { getToken } from 'next-auth/jwt';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; stayId: string }> }
+  { params }: { params: Promise<{ id: string; stayId: string }> },
 ) {
   try {
     // Get the user's session token
@@ -47,7 +47,7 @@ export async function GET(
       },
       include: {
         contacts: true, // Include contacts in the response
-      }
+      },
     });
 
     if (!stay) {
@@ -63,7 +63,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; stayId: string }> }
+  { params }: { params: Promise<{ id: string; stayId: string }> },
 ) {
   try {
     // Get the user's session token
@@ -121,7 +121,7 @@ export async function PUT(
     const { contacts, ...stayData } = data;
 
     // Start a transaction to update both the stay and its contacts
-    const updatedStay = await prisma.$transaction(async (tx) => {
+    const updatedStay = await prisma.$transaction(async tx => {
       // First delete all existing contacts for this stay
       if (contacts !== undefined) {
         await tx.contact.deleteMany({
@@ -174,7 +174,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; stayId: string }> }
+  { params }: { params: Promise<{ id: string; stayId: string }> },
 ) {
   try {
     // Get the user's session token

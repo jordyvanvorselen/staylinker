@@ -74,7 +74,7 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
       {/* Edit Button - Positioned absolutely to avoid affecting the card click */}
       <div
         className="absolute top-2 right-2 z-10"
-        onClick={(e) => e.stopPropagation()} // Prevent card click when edit button is clicked
+        onClick={e => e.stopPropagation()} // Prevent card click when edit button is clicked
       >
         <Link
           href={`/trips/${stay.tripId}/stays/${stay.id}/edit`}
@@ -112,11 +112,11 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
           <div className="mt-3 mb-2">
             <div className="divider text-xs text-gray-500 my-1">Contacts</div>
             <div className="flex flex-wrap justify-center gap-2 py-3">
-              {stay.contacts.map((contact) => (
+              {stay.contacts.map(contact => (
                 <div
                   key={contact.id}
                   className="flex items-center bg-base-100 rounded-full px-3 py-1.5 shadow-sm border border-base-300"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={e => e.stopPropagation()}
                 >
                   <User className="h-4 w-4 text-primary mr-2" />
                   <div className="flex flex-col">
@@ -124,7 +124,7 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
                     <a
                       href={`tel:${contact.phone}`}
                       className="text-xs text-primary flex items-center hover:underline focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-sm"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={e => e.stopPropagation()}
                       tabIndex={0}
                       aria-label={`Call ${contact.name} at ${contact.phone}`}
                     >

@@ -43,14 +43,14 @@ export default function NewStayPage() {
   // Handle text input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+
     // Special handling for time fields to reset confirmation when time is removed
     if ((name === 'arrivalTime' || name === 'departureTime') && value === '') {
       const confirmationField = name === 'arrivalTime' ? 'arrivalConfirmed' : 'departureConfirmed';
       setFormData(prev => ({
         ...prev,
         [name]: value,
-        [confirmationField]: false
+        [confirmationField]: false,
       }));
     } else {
       setFormData(prev => ({
@@ -116,8 +116,10 @@ export default function NewStayPage() {
   // Handle checkbox toggle changes
   const handleToggleChange = (name: string) => {
     // For arrival/departure confirmation, only allow toggling if time is set
-    if ((name === 'arrivalConfirmed' && !formData.arrivalTime) || 
-        (name === 'departureConfirmed' && !formData.departureTime)) {
+    if (
+      (name === 'arrivalConfirmed' && !formData.arrivalTime) ||
+      (name === 'departureConfirmed' && !formData.departureTime)
+    ) {
       // If no time is set, always set confirmed to false
       setFormData(prev => ({
         ...prev,
@@ -125,7 +127,7 @@ export default function NewStayPage() {
       }));
       return;
     }
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: !prev[name as keyof typeof prev],
@@ -166,21 +168,21 @@ export default function NewStayPage() {
         return;
       }
     }
-    
+
     // When moving to step 3 (Details), ensure confirmation toggles are false if no time is set
     if (step === 2) {
       const updatedFormData = { ...formData };
-      
+
       // Reset arrival confirmation if no arrival time
       if (!updatedFormData.arrivalTime) {
         updatedFormData.arrivalConfirmed = false;
       }
-      
+
       // Reset departure confirmation if no departure time
       if (!updatedFormData.departureTime) {
         updatedFormData.departureConfirmed = false;
       }
-      
+
       setFormData(updatedFormData);
     }
 
@@ -309,11 +311,7 @@ export default function NewStayPage() {
                 </div>
 
                 <div className="flex justify-end mt-6">
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={nextStep}
-                  >
+                  <button type="button" className="btn btn-primary" onClick={nextStep}>
                     Next
                   </button>
                 </div>
@@ -336,12 +334,12 @@ export default function NewStayPage() {
                       </label>
                       <DatePicker
                         selected={formData.arrivalDate}
-                        onChange={(date) => handleDateChange('arrivalDate', date)}
+                        onChange={date => handleDateChange('arrivalDate', date)}
                         className="input input-bordered w-full"
                         dateFormat="MMMM d, yyyy"
                       />
                     </div>
-                    
+
                     <div className="flex-1">
                       <label className="label">
                         <span className="label-text flex items-center gap-1">
@@ -351,14 +349,14 @@ export default function NewStayPage() {
                       </label>
                       <DatePicker
                         selected={formData.departureDate}
-                        onChange={(date) => handleDateChange('departureDate', date)}
+                        onChange={date => handleDateChange('departureDate', date)}
                         className="input input-bordered w-full"
                         dateFormat="MMMM d, yyyy"
                         minDate={formData.arrivalDate}
                       />
                     </div>
                   </div>
-                  
+
                   {/* Time inputs */}
                   <div className="flex flex-col md:flex-row gap-4">
                     <div className="form-control flex-1">
@@ -385,7 +383,7 @@ export default function NewStayPage() {
                         </label>
                       </div>
                     </div>
-                    
+
                     <div className="form-control flex-1">
                       <label className="label">
                         <span className="label-text">Departure Time (optional)</span>
@@ -413,18 +411,10 @@ export default function NewStayPage() {
                   </div>
 
                   <div className="flex justify-between mt-6">
-                    <button
-                      type="button"
-                      className="btn btn-ghost"
-                      onClick={prevStep}
-                    >
+                    <button type="button" className="btn btn-ghost" onClick={prevStep}>
                       Back
                     </button>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={nextStep}
-                    >
+                    <button type="button" className="btn btn-primary" onClick={nextStep}>
                       Next
                     </button>
                   </div>
@@ -475,18 +465,10 @@ export default function NewStayPage() {
                 </div>
 
                 <div className="flex justify-between mt-6">
-                  <button
-                    type="button"
-                    className="btn btn-ghost"
-                    onClick={prevStep}
-                  >
+                  <button type="button" className="btn btn-ghost" onClick={prevStep}>
                     Back
                   </button>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={nextStep}
-                  >
+                  <button type="button" className="btn btn-primary" onClick={nextStep}>
                     Next
                   </button>
                 </div>
@@ -508,8 +490,8 @@ export default function NewStayPage() {
                   <div className="bg-base-200/30 p-4 rounded-lg mb-4">
                     <h4 className="text-sm font-medium mb-2">Added Contacts:</h4>
                     <div className="space-y-2">
-                      {formData.contacts.map((contact) => (
-                        <div 
+                      {formData.contacts.map(contact => (
+                        <div
                           key={contact.id}
                           className="flex items-center justify-between bg-base-100 p-2 rounded-md"
                         >
@@ -558,7 +540,7 @@ export default function NewStayPage() {
                         placeholder="Contact name"
                       />
                     </div>
-                    
+
                     <div className="form-control">
                       <label className="label">
                         <span className="label-text">Phone Number</span>
@@ -572,7 +554,7 @@ export default function NewStayPage() {
                         placeholder="Phone number"
                       />
                     </div>
-                    
+
                     <button
                       type="button"
                       className="btn btn-secondary btn-sm w-full gap-1"
@@ -585,18 +567,10 @@ export default function NewStayPage() {
                 </div>
 
                 <div className="flex justify-between mt-6">
-                  <button
-                    type="button"
-                    className="btn btn-ghost"
-                    onClick={prevStep}
-                  >
+                  <button type="button" className="btn btn-ghost" onClick={prevStep}>
                     Back
                   </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary gap-2"
-                    disabled={isSubmitting}
-                  >
+                  <button type="submit" className="btn btn-primary gap-2" disabled={isSubmitting}>
                     <Save className="h-4 w-4" />
                     {isSubmitting ? 'Saving...' : 'Save Stay'}
                   </button>

@@ -56,8 +56,5 @@
       ]
     }
   ],
-  "categories": [
-    "productivity",
-    "travel"
-  ]
+  "categories": ["productivity", "travel"]
 }

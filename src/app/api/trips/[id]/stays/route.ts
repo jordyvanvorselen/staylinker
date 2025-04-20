@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 // POST: Create a new stay for a trip
-export async function POST(request: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
     // Get the user's session token
@@ -63,14 +63,16 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ i
         arrivalConfirmed: stayData.arrivalConfirmed === true,
         departureConfirmed: stayData.departureConfirmed === true,
         trip: { connect: { id: tripId } },
-        ...(contacts && contacts.length > 0 ? {
-          contacts: {
-            create: contacts.map((contact: { name: string; phone: string }) => ({
-              name: contact.name,
-              phone: contact.phone
-            }))
-          }
-        } : {})
+        ...(contacts && contacts.length > 0
+          ? {
+              contacts: {
+                create: contacts.map((contact: { name: string; phone: string }) => ({
+                  name: contact.name,
+                  phone: contact.phone,
+                })),
+              },
+            }
+          : {}),
       },
       include: {
         contacts: true, // Include contacts in the response
@@ -85,7 +87,7 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ i
 }
 
 // GET: Get all stays for a trip
-export async function GET(request: NextRequest, {params}: { params: Promise<{ id: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
     // Get the user's session token
@@ -100,12 +102,12 @@ export async function GET(request: NextRequest, {params}: { params: Promise<{ id
     // Check if trip exists
     const trip = await prisma.trip.findUnique({
       where: { id: tripId },
-      include: { 
+      include: {
         stays: {
           include: {
             contacts: true, // Include contacts for each stay
-          }
-        } 
+          },
+        },
       },
     });
 
