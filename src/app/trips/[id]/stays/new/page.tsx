@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Calendar, MapPin, Save } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Save, Plus, X, Phone, User } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Contact } from '../../../../../types';
 
 export default function NewStayPage() {
   const router = useRouter();
@@ -27,7 +28,17 @@ export default function NewStayPage() {
     notes: '',
     arrivalConfirmed: false,
     departureConfirmed: false,
+    contacts: [] as Contact[],
   });
+
+  // New contact form state
+  const [newContact, setNewContact] = useState({
+    name: '',
+    phone: '',
+  });
+
+  // Contact counter for temporary client-side IDs
+  const [contactCounter, setContactCounter] = useState(0);
 
   // Handle text input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -47,6 +58,59 @@ export default function NewStayPage() {
         [name]: value,
       }));
     }
+  };
+
+  // Handle new contact form changes
+  const handleContactInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewContact(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Add a new contact
+  const addContact = () => {
+    // Basic validation for contact
+    if (!newContact.name.trim()) {
+      setError('Contact name is required');
+      return;
+    }
+    if (!newContact.phone.trim()) {
+      setError('Contact phone number is required');
+      return;
+    }
+
+    // Add contact to formData with temporary ID
+    const contact: Contact = {
+      id: `temp-${contactCounter}`, // Temporary ID for client-side usage
+      name: newContact.name.trim(),
+      phone: newContact.phone.trim(),
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      contacts: [...prev.contacts, contact],
+    }));
+
+    // Increment counter for next contact
+    setContactCounter(prev => prev + 1);
+
+    // Reset new contact form
+    setNewContact({
+      name: '',
+      phone: '',
+    });
+
+    setError(null);
+  };
+
+  // Remove a contact
+  const removeContact = (id: string) => {
+    setFormData(prev => ({
+      ...prev,
+      contacts: prev.contacts.filter(contact => contact.id !== id),
+    }));
   };
 
   // Handle checkbox toggle changes
@@ -149,12 +213,19 @@ export default function NewStayPage() {
       setIsSubmitting(true);
       setError(null);
 
+      // Prepare data for submission
+      // Remove temporary IDs from contacts - the backend will generate real IDs
+      const submissionData = {
+        ...formData,
+        contacts: formData.contacts.map(({ id, ...contactData }) => contactData),
+      };
+
       const response = await fetch(`/api/trips/${tripId}/stays`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       });
 
       if (!response.ok) {
@@ -193,6 +264,7 @@ export default function NewStayPage() {
             <li className={`step ${step >= 1 ? 'step-primary' : ''}`}>Location</li>
             <li className={`step ${step >= 2 ? 'step-primary' : ''}`}>Dates</li>
             <li className={`step ${step >= 3 ? 'step-primary' : ''}`}>Details</li>
+            <li className={`step ${step >= 4 ? 'step-primary' : ''}`}>Contacts</li>
           </ul>
 
           {error && (
@@ -202,56 +274,47 @@ export default function NewStayPage() {
           )}
 
           <form onSubmit={handleSubmit}>
-            {/* Step 1: Location */}
+            {/* Step 1: Location details */}
             {step === 1 && (
               <div className="space-y-4">
-                <div className="form-control w-full">
-                  <label className="label" htmlFor="location">
-                    <span className="label-text font-medium">Location Name</span>
-                    <span className="label-text-alt text-error">Required</span>
-                  </label>
-                  <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                      <MapPin className="h-5 w-5 text-gray-400" />
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text flex items-center gap-1">
+                      <MapPin className="h-4 w-4" />
+                      Location (City/Town)
                     </span>
-                    <input
-                      type="text"
-                      id="location"
-                      name="location"
-                      value={formData.location}
-                      onChange={handleInputChange}
-                      placeholder="e.g., Paris Apartment"
-                      className="input input-bordered w-full pl-10"
-                      required
-                      aria-required="true"
-                    />
-                  </div>
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    className="input input-bordered"
+                    placeholder="e.g., Paris, London, New York"
+                    autoFocus
+                  />
                 </div>
 
-                <div className="form-control w-full">
-                  <label className="label" htmlFor="address">
-                    <span className="label-text font-medium">Address</span>
-                    <span className="label-text-alt text-error">Required</span>
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Address</span>
                   </label>
                   <textarea
-                    id="address"
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    placeholder="Full address of your stay"
-                    className="textarea textarea-bordered h-20 w-full"
-                    required
-                    aria-required="true"
+                    className="textarea textarea-bordered h-24"
+                    placeholder="Full address of the stay"
                   />
                 </div>
 
                 <div className="flex justify-end mt-6">
                   <button
                     type="button"
-                    className="btn btn-primary hover:shadow-md active:shadow-inner active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-focus focus:ring-offset-1"
+                    className="btn btn-primary"
                     onClick={nextStep}
                   >
-                    Next: Select Dates
+                    Next
                   </button>
                 </div>
               </div>
@@ -260,202 +323,282 @@ export default function NewStayPage() {
             {/* Step 2: Dates */}
             {step === 2 && (
               <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="form-control w-full">
-                    <label className="label" htmlFor="arrivalDate">
-                      <span className="label-text font-medium">Arrival Date</span>
-                      <span className="label-text-alt text-error">Required</span>
-                    </label>
-                    <div className="relative">
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 z-10">
-                        <Calendar className="h-5 w-5 text-accent" />
-                      </span>
+                {/* Date inputs */}
+                <div className="space-y-4">
+                  {/* Date inputs on a single row */}
+                  <div className="flex flex-row gap-4">
+                    <div className="flex-1">
+                      <label className="label">
+                        <span className="label-text flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          Arrival Date
+                        </span>
+                      </label>
                       <DatePicker
                         selected={formData.arrivalDate}
-                        onChange={(date: Date | null) => handleDateChange('arrivalDate', date)}
-                        className="input input-bordered w-full pl-10"
+                        onChange={(date) => handleDateChange('arrivalDate', date)}
+                        className="input input-bordered w-full"
                         dateFormat="MMMM d, yyyy"
-                        required
-                        id="arrivalDate"
                       />
                     </div>
-                    <div className="mt-2">
-                      <label className="label" htmlFor="arrivalNotes">
-                        <span className="label-text">Arrival Notes (Optional)</span>
+                    
+                    <div className="flex-1">
+                      <label className="label">
+                        <span className="label-text flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          Departure Date
+                        </span>
                       </label>
-                      <textarea
-                        id="arrivalNotes"
-                        name="arrivalNotes"
-                        value={formData.arrivalNotes}
-                        onChange={handleInputChange}
-                        placeholder="e.g., Check-in time, key location"
-                        className="textarea textarea-bordered h-16 w-full text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-control w-full">
-                    <label className="label" htmlFor="departureDate">
-                      <span className="label-text font-medium">Departure Date</span>
-                      <span className="label-text-alt text-error">Required</span>
-                    </label>
-                    <div className="relative">
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 z-10">
-                        <Calendar className="h-5 w-5 text-primary" />
-                      </span>
                       <DatePicker
                         selected={formData.departureDate}
-                        onChange={(date: Date | null) => handleDateChange('departureDate', date)}
-                        className="input input-bordered w-full pl-10"
+                        onChange={(date) => handleDateChange('departureDate', date)}
+                        className="input input-bordered w-full"
                         dateFormat="MMMM d, yyyy"
-                        minDate={new Date(formData.arrivalDate.getTime() + 86400000)} // Next day
-                        required
-                        id="departureDate"
-                      />
-                    </div>
-                    <div className="mt-2">
-                      <label className="label" htmlFor="departureNotes">
-                        <span className="label-text">Departure Notes (Optional)</span>
-                      </label>
-                      <textarea
-                        id="departureNotes"
-                        name="departureNotes"
-                        value={formData.departureNotes}
-                        onChange={handleInputChange}
-                        placeholder="e.g., Check-out time, key drop-off"
-                        className="textarea textarea-bordered h-16 w-full text-sm"
+                        minDate={formData.arrivalDate}
                       />
                     </div>
                   </div>
-                </div>
+                  
+                  {/* Time inputs */}
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="form-control flex-1">
+                      <label className="label">
+                        <span className="label-text">Arrival Time (optional)</span>
+                      </label>
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="time"
+                          name="arrivalTime"
+                          value={formData.arrivalTime}
+                          onChange={handleInputChange}
+                          className="input input-bordered flex-1"
+                        />
+                        <label className="label cursor-pointer justify-start gap-2">
+                          <input
+                            type="checkbox"
+                            disabled={!formData.arrivalTime}
+                            checked={formData.arrivalConfirmed}
+                            onChange={() => handleToggleChange('arrivalConfirmed')}
+                            className="toggle toggle-success toggle-sm"
+                          />
+                          <span className="label-text">Confirmed</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div className="form-control flex-1">
+                      <label className="label">
+                        <span className="label-text">Departure Time (optional)</span>
+                      </label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="time"
+                          name="departureTime"
+                          value={formData.departureTime}
+                          onChange={handleInputChange}
+                          className="input input-bordered w-full"
+                        />
+                        <label className="label cursor-pointer justify-start gap-2">
+                          <input
+                            type="checkbox"
+                            disabled={!formData.departureTime}
+                            checked={formData.departureConfirmed}
+                            onChange={() => handleToggleChange('departureConfirmed')}
+                            className="toggle toggle-success toggle-sm"
+                          />
+                          <span className="label-text">Confirmed</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="flex justify-between mt-6">
-                  <button
-                    type="button"
-                    className="btn btn-outline hover:shadow-sm active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-base-300"
-                    onClick={prevStep}
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-primary hover:shadow-md active:shadow-inner active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-focus focus:ring-offset-1"
-                    onClick={nextStep}
-                  >
-                    Next: Add Details
-                  </button>
+                  <div className="flex justify-between mt-6">
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      onClick={prevStep}
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={nextStep}
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Step 3: Details */}
+            {/* Step 3: More details */}
             {step === 3 && (
               <div className="space-y-4">
-                {/* Arrival Information */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="form-control">
-                      <label className="label cursor-pointer">
-                        <span className="label-text mr-4 font-medium">Arrival Confirmed</span>
-                        <input 
-                          type="checkbox" 
-                          className="toggle toggle-success" 
-                          checked={formData.arrivalConfirmed}
-                          onChange={() => handleToggleChange('arrivalConfirmed')}
-                          disabled={!formData.arrivalTime}
-                          aria-label="Confirm arrival"
-                        />
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="form-control w-full">
-                    <label className="label" htmlFor="arrivalNotes">
-                      <span className="label-text font-medium">Arrival Notes</span>
-                    </label>
-                    <textarea
-                      id="arrivalNotes"
-                      name="arrivalNotes"
-                      value={formData.arrivalNotes}
-                      onChange={handleInputChange}
-                      placeholder="Special instructions for arrival, contact info, etc."
-                      className="textarea textarea-bordered h-20 w-full"
-                    />
-                  </div>
-                </div>
-
-                {/* Departure Information */}
-                <div className="space-y-4 mt-8">
-                  <div className="flex items-center justify-between">
-                    <div className="form-control">
-                      <label className="label cursor-pointer">
-                        <span className="label-text mr-4 font-medium">Departure Confirmed</span>
-                        <input 
-                          type="checkbox" 
-                          className="toggle toggle-success" 
-                          checked={formData.departureConfirmed}
-                          onChange={() => handleToggleChange('departureConfirmed')}
-                          disabled={!formData.departureTime}
-                          aria-label="Confirm departure"
-                        />
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="form-control w-full">
-                    <label className="label" htmlFor="departureNotes">
-                      <span className="label-text font-medium">Departure Notes</span>
-                    </label>
-                    <textarea
-                      id="departureNotes"
-                      name="departureNotes"
-                      value={formData.departureNotes}
-                      onChange={handleInputChange}
-                      placeholder="Special instructions for departure, checkout procedures, etc."
-                      className="textarea textarea-bordered h-20 w-full"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-control w-full">
-                  <label className="label" htmlFor="notes">
-                    <span className="label-text font-medium">Stay Notes</span>
-                    <span className="label-text-alt">Optional</span>
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Notes about the stay (optional)</span>
                   </label>
                   <textarea
-                    id="notes"
                     name="notes"
                     value={formData.notes}
                     onChange={handleInputChange}
-                    placeholder="Add any additional notes about this stay..."
-                    className="textarea textarea-bordered h-48 w-full"
+                    className="textarea textarea-bordered h-24"
+                    placeholder="Important information about this stay"
+                  />
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Arrival notes (optional)</span>
+                  </label>
+                  <textarea
+                    name="arrivalNotes"
+                    value={formData.arrivalNotes}
+                    onChange={handleInputChange}
+                    className="textarea textarea-bordered h-20"
+                    placeholder="Check-in instructions, key pickup, etc."
+                  />
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Departure notes (optional)</span>
+                  </label>
+                  <textarea
+                    name="departureNotes"
+                    value={formData.departureNotes}
+                    onChange={handleInputChange}
+                    className="textarea textarea-bordered h-20"
+                    placeholder="Check-out instructions, key return, etc."
                   />
                 </div>
 
                 <div className="flex justify-between mt-6">
                   <button
                     type="button"
-                    className="btn btn-outline hover:shadow-sm active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-base-300"
+                    className="btn btn-ghost"
+                    onClick={prevStep}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={nextStep}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Contacts */}
+            {step === 4 && (
+              <div className="space-y-4">
+                <div className="flex flex-col items-center mb-2">
+                  <h3 className="text-lg font-semibold mb-1">Contacts</h3>
+                  <p className="text-sm text-gray-500 text-center">
+                    Add contacts for this stay (e.g., host, property manager)
+                  </p>
+                </div>
+
+                {/* Current contacts list */}
+                {formData.contacts.length > 0 && (
+                  <div className="bg-base-200/30 p-4 rounded-lg mb-4">
+                    <h4 className="text-sm font-medium mb-2">Added Contacts:</h4>
+                    <div className="space-y-2">
+                      {formData.contacts.map((contact) => (
+                        <div 
+                          key={contact.id}
+                          className="flex items-center justify-between bg-base-100 p-2 rounded-md"
+                        >
+                          <div className="flex items-center">
+                            <div className="avatar placeholder mr-2">
+                              <div className="bg-primary/10 text-primary rounded-full w-8 h-8">
+                                <User className="h-4 w-4" />
+                              </div>
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm">{contact.name}</p>
+                              <p className="text-xs text-gray-500 flex items-center">
+                                <Phone className="h-3 w-3 mr-1" />
+                                {contact.phone}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            className="btn btn-ghost btn-sm btn-circle"
+                            onClick={() => removeContact(contact.id)}
+                            aria-label={`Remove contact ${contact.name}`}
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Add new contact form */}
+                <div className="bg-base-200/30 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium mb-2">Add New Contact:</h4>
+                  <div className="space-y-3">
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Name</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={newContact.name}
+                        onChange={handleContactInputChange}
+                        className="input input-bordered"
+                        placeholder="Contact name"
+                      />
+                    </div>
+                    
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Phone Number</span>
+                      </label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={newContact.phone}
+                        onChange={handleContactInputChange}
+                        className="input input-bordered"
+                        placeholder="Phone number"
+                      />
+                    </div>
+                    
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm w-full gap-1"
+                      onClick={addContact}
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Contact
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex justify-between mt-6">
+                  <button
+                    type="button"
+                    className="btn btn-ghost"
                     onClick={prevStep}
                   >
                     Back
                   </button>
                   <button
                     type="submit"
-                    className="btn btn-primary gap-2 hover:shadow-md active:shadow-inner active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-focus focus:ring-offset-1"
+                    className="btn btn-primary gap-2"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? (
-                      <>
-                        <span className="loading loading-spinner loading-xs"></span>
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="h-4 w-4" />
-                        Create Stay
-                      </>
-                    )}
+                    <Save className="h-4 w-4" />
+                    {isSubmitting ? 'Saving...' : 'Save Stay'}
                   </button>
                 </div>
               </div>

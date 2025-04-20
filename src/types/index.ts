@@ -1,3 +1,9 @@
+export interface Contact {
+  id: string;
+  name: string;
+  phone: string;
+}
+
 export interface Stay {
   id: string;
   location: string; // City/village name
@@ -11,6 +17,7 @@ export interface Stay {
   departureNotes?: string; // Optional notes specific to departure
   arrivalConfirmed?: boolean; // Optional field to track if arrival is confirmed
   departureConfirmed?: boolean; // Optional field to track if departure is confirmed
+  contacts?: Contact[]; // Array of contact information for the stay
   tripId?: string; // Reference to the parent trip
   createdAt?: string;
   updatedAt?: string;

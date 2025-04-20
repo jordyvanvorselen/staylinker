@@ -45,21 +45,35 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ i
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Create new stay
+    // Extract contacts from the data if they exist
+    const { contacts, ...stayData } = data;
+
+    // Create new stay with contacts if provided
     const newStay = await prisma.stay.create({
       data: {
-        location: data.location,
-        address: data.address,
-        arrivalDate: new Date(data.arrivalDate),
-        departureDate: new Date(data.departureDate),
-        arrivalTime: data.arrivalTime || null,
-        departureTime: data.departureTime || null,
-        arrivalNotes: data.arrivalNotes || null,
-        departureNotes: data.departureNotes || null,
-        notes: data.notes || null,
-        arrivalConfirmed: data.arrivalConfirmed === true,
-        departureConfirmed: data.departureConfirmed === true,
+        location: stayData.location,
+        address: stayData.address,
+        arrivalDate: new Date(stayData.arrivalDate),
+        departureDate: new Date(stayData.departureDate),
+        arrivalTime: stayData.arrivalTime || null,
+        departureTime: stayData.departureTime || null,
+        arrivalNotes: stayData.arrivalNotes || null,
+        departureNotes: stayData.departureNotes || null,
+        notes: stayData.notes || null,
+        arrivalConfirmed: stayData.arrivalConfirmed === true,
+        departureConfirmed: stayData.departureConfirmed === true,
         trip: { connect: { id: tripId } },
+        ...(contacts && contacts.length > 0 ? {
+          contacts: {
+            create: contacts.map((contact: { name: string; phone: string }) => ({
+              name: contact.name,
+              phone: contact.phone
+            }))
+          }
+        } : {})
+      },
+      include: {
+        contacts: true, // Include contacts in the response
       },
     });
 
@@ -86,7 +100,13 @@ export async function GET(request: NextRequest, {params}: { params: Promise<{ id
     // Check if trip exists
     const trip = await prisma.trip.findUnique({
       where: { id: tripId },
-      include: { stays: true },
+      include: { 
+        stays: {
+          include: {
+            contacts: true, // Include contacts for each stay
+          }
+        } 
+      },
     });
 
     if (!trip) {
