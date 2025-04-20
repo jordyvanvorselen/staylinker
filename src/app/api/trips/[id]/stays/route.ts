@@ -52,6 +52,8 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ i
         address: data.address,
         arrivalDate: new Date(data.arrivalDate),
         departureDate: new Date(data.departureDate),
+        arrivalTime: data.arrivalTime || null,
+        departureTime: data.departureTime || null,
         arrivalNotes: data.arrivalNotes || null,
         departureNotes: data.departureNotes || null,
         notes: data.notes || null,

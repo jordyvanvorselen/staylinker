@@ -4,6 +4,8 @@ export interface Stay {
   address: string;
   arrivalDate: string; // ISO string format
   departureDate: string; // ISO string format
+  arrivalTime?: string; // Time in HH:MM format
+  departureTime?: string; // Time in HH:MM format
   notes?: string; // Optional field for general information
   arrivalNotes?: string; // Optional notes specific to arrival
   departureNotes?: string; // Optional notes specific to departure

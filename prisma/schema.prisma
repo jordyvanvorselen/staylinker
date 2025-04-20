@@ -94,6 +94,8 @@ model Stay {
   address          String
   arrivalDate      DateTime // Store as DateTime
   departureDate    DateTime // Store as DateTime
+  arrivalTime      String?  // Optional time in HH:MM format
+  departureTime    String?  // Optional time in HH:MM format
   notes            String?  // Optional field for general information
   arrivalNotes     String?  // Optional notes specific to arrival
   departureNotes   String?  // Optional notes specific to departure

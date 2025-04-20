@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { Stay } from '../../types';
 import { format } from 'date-fns';
-import { Calendar, Edit, CheckCircle, Clock } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import Link from 'next/link';
+import TravelDateSection from './TravelDateSection';
 
 interface StayCardProps {
   stay: Stay;
@@ -30,6 +31,30 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
 
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), 'MMM dd, yyyy');
+  };
+
+  const formatTime = (timeString?: string) => {
+    if (!timeString) return null;
+    
+    try {
+      // Parse HH:MM format
+      const [hoursStr, minutesStr] = timeString.split(':');
+      if (!hoursStr || !minutesStr) return timeString;
+      
+      const hours = Number(hoursStr);
+      const minutes = Number(minutesStr);
+      
+      if (isNaN(hours) || isNaN(minutes)) return timeString;
+      
+      // Create a date object to format the time
+      const date = new Date();
+      date.setHours(hours, minutes, 0);
+      
+      // Format as localized time (e.g., "3:30 PM")
+      return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    } catch (_error) {
+      return timeString; // Fallback to original string if parsing fails
+    }
   };
 
   const dayCount = Math.ceil(
@@ -62,26 +87,15 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
       </div>
 
       {/* Arrival Section at Top */}
-      <div className="bg-gradient-to-br from-accent/20 via-accent/5 to-base-200/30 py-3 px-6 flex flex-col items-center border-b border-base-300/20 relative">
-        <span className="text-xs uppercase tracking-wider text-gray-500 mb-1">Arrival</span>
-        <div className="flex items-center gap-2 mb-1">
-          <Calendar className="h-4 w-4 text-accent" />
-          <span className="font-medium text-md">{formatDate(stay.arrivalDate)}</span>
-          {stay.arrivalConfirmed ? (
-            <CheckCircle className="h-4 w-4 text-green-500 ml-1" aria-label="Arrival confirmed" />
-          ) : (
-            <Clock className="h-4 w-4 text-orange-400 opacity-60 ml-1" aria-label="Arrival not confirmed yet" />
-          )}
-        </div>
-
-        {stay.arrivalNotes && (
-          <div className="mt-2 w-full px-2">
-            <p className={`text-xs text-left text-gray-500 italic ${stay.arrivalConfirmed ? 'pl-4 border-l-2 border-accent' : ''}`}>
-              {stay.arrivalNotes}
-            </p>
-          </div>
-        )}
-      </div>
+      <TravelDateSection
+        type="arrival"
+        date={stay.arrivalDate}
+        time={stay.arrivalTime}
+        confirmed={stay.arrivalConfirmed}
+        notes={stay.arrivalNotes}
+        formatDate={formatDate}
+        formatTime={formatTime}
+      />
 
       {/* Main Content */}
       <div className="card-body p-6 bg-base-200/10">
@@ -116,26 +130,15 @@ const StayCard = ({ stay, onClick }: StayCardProps) => {
       </div>
 
       {/* Departure Section at Bottom */}
-      <div className="bg-gradient-to-tr from-primary/20 via-primary/5 to-base-200/30 py-3 px-6 flex flex-col items-center border-t border-base-300/20">
-        <span className="text-xs uppercase tracking-wider text-gray-500 mb-1">Departure</span>
-        <div className="flex items-center gap-2 mb-1">
-          <Calendar className="h-4 w-4 text-primary" />
-          <span className="font-medium text-md">{formatDate(stay.departureDate)}</span>
-          {stay.departureConfirmed ? (
-            <CheckCircle className="h-4 w-4 text-green-500 ml-1" aria-label="Departure confirmed" />
-          ) : (
-            <Clock className="h-4 w-4 text-orange-400 opacity-60 ml-1" aria-label="Departure not confirmed yet" />
-          )}
-        </div>
-
-        {stay.departureNotes && (
-          <div className="mt-2 w-full px-2">
-            <p className={`text-xs text-left text-gray-500 italic ${stay.departureConfirmed ? 'pl-4 border-l-2 border-primary' : ''}`}>
-              {stay.departureNotes}
-            </p>
-          </div>
-        )}
-      </div>
+      <TravelDateSection
+        type="departure"
+        date={stay.departureDate}
+        time={stay.departureTime}
+        confirmed={stay.departureConfirmed}
+        notes={stay.departureNotes}
+        formatDate={formatDate}
+        formatTime={formatTime}
+      />
     </div>
   );
 };

@@ -20,6 +20,8 @@ export default function NewStayPage() {
     address: '',
     arrivalDate: new Date(),
     departureDate: new Date(new Date().setDate(new Date().getDate() + 1)), // Default to tomorrow
+    arrivalTime: '',
+    departureTime: '',
     arrivalNotes: '',
     departureNotes: '',
     notes: '',
@@ -30,14 +32,36 @@ export default function NewStayPage() {
   // Handle text input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+    
+    // Special handling for time fields to reset confirmation when time is removed
+    if ((name === 'arrivalTime' || name === 'departureTime') && value === '') {
+      const confirmationField = name === 'arrivalTime' ? 'arrivalConfirmed' : 'departureConfirmed';
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+        [confirmationField]: false
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   // Handle checkbox toggle changes
   const handleToggleChange = (name: string) => {
+    // For arrival/departure confirmation, only allow toggling if time is set
+    if ((name === 'arrivalConfirmed' && !formData.arrivalTime) || 
+        (name === 'departureConfirmed' && !formData.departureTime)) {
+      // If no time is set, always set confirmed to false
+      setFormData(prev => ({
+        ...prev,
+        [name]: false,
+      }));
+      return;
+    }
+    
     setFormData(prev => ({
       ...prev,
       [name]: !prev[name as keyof typeof prev],
@@ -77,6 +101,23 @@ export default function NewStayPage() {
         setError('Address is required');
         return;
       }
+    }
+    
+    // When moving to step 3 (Details), ensure confirmation toggles are false if no time is set
+    if (step === 2) {
+      const updatedFormData = { ...formData };
+      
+      // Reset arrival confirmation if no arrival time
+      if (!updatedFormData.arrivalTime) {
+        updatedFormData.arrivalConfirmed = false;
+      }
+      
+      // Reset departure confirmation if no departure time
+      if (!updatedFormData.departureTime) {
+        updatedFormData.departureConfirmed = false;
+      }
+      
+      setFormData(updatedFormData);
     }
 
     setError(null);
@@ -321,6 +362,7 @@ export default function NewStayPage() {
                           className="toggle toggle-success" 
                           checked={formData.arrivalConfirmed}
                           onChange={() => handleToggleChange('arrivalConfirmed')}
+                          disabled={!formData.arrivalTime}
                           aria-label="Confirm arrival"
                         />
                       </label>
@@ -353,6 +395,7 @@ export default function NewStayPage() {
                           className="toggle toggle-success" 
                           checked={formData.departureConfirmed}
                           onChange={() => handleToggleChange('departureConfirmed')}
+                          disabled={!formData.departureTime}
                           aria-label="Confirm departure"
                         />
                       </label>

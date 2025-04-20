@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Calendar, MapPin, Save, Trash2 } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Save, Trash2, Clock } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -22,6 +22,8 @@ export default function EditStayPage() {
     address: '',
     arrivalDate: new Date(),
     departureDate: new Date(new Date().setDate(new Date().getDate() + 1)),
+    arrivalTime: '',
+    departureTime: '',
     arrivalNotes: '',
     departureNotes: '',
     notes: '',
@@ -52,6 +54,8 @@ export default function EditStayPage() {
           address: data.address,
           arrivalDate: new Date(data.arrivalDate),
           departureDate: new Date(data.departureDate),
+          arrivalTime: data.arrivalTime || '',
+          departureTime: data.departureTime || '',
           arrivalNotes: data.arrivalNotes || '',
           departureNotes: data.departureNotes || '',
           notes: data.notes || '',
@@ -102,6 +106,17 @@ export default function EditStayPage() {
 
   // Handle checkbox toggle changes
   const handleToggleChange = (name: string) => {
+    // For arrival/departure confirmation, only allow toggling if time is set
+    if ((name === 'arrivalConfirmed' && !formData.arrivalTime) || 
+        (name === 'departureConfirmed' && !formData.departureTime)) {
+      // If no time is set, always set confirmed to false
+      setFormData(prev => ({
+        ...prev,
+        [name]: false,
+      }));
+      return;
+    }
+    
     setFormData(prev => ({
       ...prev,
       [name]: !prev[name as keyof typeof prev],
@@ -120,6 +135,23 @@ export default function EditStayPage() {
         setError('Address is required');
         return;
       }
+    }
+    
+    // When moving to step 3 (Details), ensure confirmation toggles are false if no time is set
+    if (step === 2) {
+      const updatedFormData = { ...formData };
+      
+      // Reset arrival confirmation if no arrival time
+      if (!updatedFormData.arrivalTime) {
+        updatedFormData.arrivalConfirmed = false;
+      }
+      
+      // Reset departure confirmation if no departure time
+      if (!updatedFormData.departureTime) {
+        updatedFormData.departureConfirmed = false;
+      }
+      
+      setFormData(updatedFormData);
     }
 
     setError(null);
@@ -317,46 +349,94 @@ export default function EditStayPage() {
             {/* Step 2: Dates */}
             {step === 2 && (
               <div className="space-y-4">
-                <div className="form-control w-full">
-                  <label className="label" htmlFor="arrivalDate">
-                    <span className="label-text font-medium">Arrival Date</span>
-                    <span className="label-text-alt text-error">Required</span>
-                  </label>
-                  <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 z-10">
-                      <Calendar className="h-5 w-5 text-gray-400" />
-                    </span>
-                    <DatePicker
-                      id="arrivalDate"
-                      selected={formData.arrivalDate}
-                      onChange={date => handleDateChange('arrivalDate', date)}
-                      className="input input-bordered w-full pl-10"
-                      dateFormat="MMMM d, yyyy"
-                      required
-                      aria-required="true"
-                    />
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="form-control flex-1">
+                    <label className="label" htmlFor="arrivalDate">
+                      <span className="label-text font-medium">Arrival Date</span>
+                      <span className="label-text-alt text-error">Required</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <Calendar className="h-5 w-5 text-gray-400" />
+                      </span>
+                      <DatePicker
+                        selected={formData.arrivalDate}
+                        onChange={(date) => handleDateChange('arrivalDate', date)}
+                        className="input input-bordered w-full pl-10"
+                        dateFormat="MMMM d, yyyy"
+                        id="arrivalDate"
+                        placeholderText="Select arrival date"
+                        required
+                        aria-required="true"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="form-control w-full md:w-1/3">
+                    <label className="label" htmlFor="arrivalTime">
+                      <span className="label-text font-medium">Arrival Time</span>
+                      <span className="label-text-alt">Optional</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <Clock className="h-5 w-5 text-gray-400" />
+                      </span>
+                      <input
+                        type="time"
+                        id="arrivalTime"
+                        name="arrivalTime"
+                        value={formData.arrivalTime}
+                        onChange={handleInputChange}
+                        className="input input-bordered w-full pl-10"
+                        aria-label="Arrival time"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="form-control w-full">
-                  <label className="label" htmlFor="departureDate">
-                    <span className="label-text font-medium">Departure Date</span>
-                    <span className="label-text-alt text-error">Required</span>
-                  </label>
-                  <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 z-10">
-                      <Calendar className="h-5 w-5 text-gray-400" />
-                    </span>
-                    <DatePicker
-                      id="departureDate"
-                      selected={formData.departureDate}
-                      onChange={date => handleDateChange('departureDate', date)}
-                      className="input input-bordered w-full pl-10"
-                      dateFormat="MMMM d, yyyy"
-                      minDate={new Date(formData.arrivalDate.getTime() + 86400000)} // +1 day from arrival
-                      required
-                      aria-required="true"
-                    />
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="form-control flex-1">
+                    <label className="label" htmlFor="departureDate">
+                      <span className="label-text font-medium">Departure Date</span>
+                      <span className="label-text-alt text-error">Required</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <Calendar className="h-5 w-5 text-gray-400" />
+                      </span>
+                      <DatePicker
+                        selected={formData.departureDate}
+                        onChange={(date) => handleDateChange('departureDate', date)}
+                        className="input input-bordered w-full pl-10"
+                        dateFormat="MMMM d, yyyy"
+                        minDate={formData.arrivalDate}
+                        id="departureDate"
+                        placeholderText="Select departure date"
+                        required
+                        aria-required="true"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="form-control w-full md:w-1/3">
+                    <label className="label" htmlFor="departureTime">
+                      <span className="label-text font-medium">Departure Time</span>
+                      <span className="label-text-alt">Optional</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <Clock className="h-5 w-5 text-gray-400" />
+                      </span>
+                      <input
+                        type="time"
+                        id="departureTime"
+                        name="departureTime"
+                        value={formData.departureTime}
+                        onChange={handleInputChange}
+                        className="input input-bordered w-full pl-10"
+                        aria-label="Departure time"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -393,6 +473,7 @@ export default function EditStayPage() {
                           className="toggle toggle-success" 
                           checked={formData.arrivalConfirmed}
                           onChange={() => handleToggleChange('arrivalConfirmed')}
+                          disabled={!formData.arrivalTime}
                           aria-label="Confirm arrival"
                         />
                       </label>
@@ -425,6 +506,7 @@ export default function EditStayPage() {
                           className="toggle toggle-success" 
                           checked={formData.departureConfirmed}
                           onChange={() => handleToggleChange('departureConfirmed')}
+                          disabled={!formData.departureTime}
                           aria-label="Confirm departure"
                         />
                       </label>
