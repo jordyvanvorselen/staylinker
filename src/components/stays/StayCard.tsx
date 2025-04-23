@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { Edit, Phone, User } from 'lucide-react';
 import Link from 'next/link';
 import TravelDateSection from './TravelDateSection';
+import ContactItem from '../contacts/ContactItem';
 
 interface StayCardProps {
   stay: Stay;
@@ -116,26 +117,12 @@ const StayCard = ({ stay, onClick, isGuest = false }: StayCardProps) => {
             <div className="divider text-xs text-gray-500 my-1">Contacts</div>
             <div className="flex flex-wrap justify-center gap-2 py-3">
               {stay.contacts.map(contact => (
-                <div
+                <ContactItem 
                   key={contact.id}
-                  className="flex items-center bg-base-100 rounded-full px-3 py-1.5 shadow-sm border border-base-300"
+                  contact={contact}
+                  compact={true}
                   onClick={e => e.stopPropagation()}
-                >
-                  <User className="h-4 w-4 text-primary mr-2" />
-                  <div className="flex flex-col">
-                    <span className="text-xs font-medium">{contact.name}</span>
-                    <a
-                      href={`tel:${contact.phone}`}
-                      className="text-xs text-primary flex items-center hover:underline focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-sm"
-                      onClick={e => e.stopPropagation()}
-                      tabIndex={0}
-                      aria-label={`Call ${contact.name} at ${contact.phone}`}
-                    >
-                      <Phone className="h-2.5 w-2.5 mr-1" />
-                      {contact.phone}
-                    </a>
-                  </div>
-                </div>
+                />
               ))}
             </div>
           </div>

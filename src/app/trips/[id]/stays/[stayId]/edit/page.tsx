@@ -7,6 +7,7 @@ import { ArrowLeft, Calendar, MapPin, Save, Trash2, Plus, X, Phone, User } from 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Contact } from '../../../../../../types';
+import ContactItem from '../../../../../../components/contacts/ContactItem';
 
 export default function EditStayPage() {
   const router = useRouter();
@@ -586,33 +587,11 @@ export default function EditStayPage() {
                     <h4 className="text-sm font-medium mb-2">Added Contacts:</h4>
                     <div className="space-y-2">
                       {formData.contacts.map(contact => (
-                        <div
+                        <ContactItem
                           key={contact.id}
-                          className="flex items-center justify-between bg-base-100 p-2 rounded-md"
-                        >
-                          <div className="flex items-center">
-                            <div className="avatar placeholder mr-2">
-                              <div className="bg-primary/10 text-primary rounded-full w-8 h-8">
-                                <User className="h-4 w-4" />
-                              </div>
-                            </div>
-                            <div>
-                              <p className="font-medium text-sm">{contact.name}</p>
-                              <p className="text-xs text-gray-500 flex items-center">
-                                <Phone className="h-3 w-3 mr-1" />
-                                {contact.phone}
-                              </p>
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            className="btn btn-ghost btn-sm btn-circle"
-                            onClick={() => removeContact(contact.id)}
-                            aria-label={`Remove contact ${contact.name}`}
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
-                        </div>
+                          contact={contact}
+                          onRemove={removeContact}
+                        />
                       ))}
                     </div>
                   </div>
