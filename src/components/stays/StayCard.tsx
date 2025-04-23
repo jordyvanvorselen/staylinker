@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Stay } from '../../types';
 import { format } from 'date-fns';
-import { Edit, Phone, User } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import Link from 'next/link';
 import TravelDateSection from './TravelDateSection';
 import ContactItem from '../contacts/ContactItem';
@@ -117,7 +117,7 @@ const StayCard = ({ stay, onClick, isGuest = false }: StayCardProps) => {
             <div className="divider text-xs text-gray-500 my-1">Contacts</div>
             <div className="flex flex-wrap justify-center gap-2 py-3">
               {stay.contacts.map(contact => (
-                <ContactItem 
+                <ContactItem
                   key={contact.id}
                   contact={contact}
                   compact={true}

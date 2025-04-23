@@ -5,24 +5,24 @@ import { Contact } from '../../types';
 
 interface ContactItemProps {
   contact: Contact;
-  onRemove?: (id: string) => void;
+  onRemove?: (_id: string) => void;
   compact?: boolean;
-  onClick?: (e: React.MouseEvent) => void;
+  onClick?: (_e: React.MouseEvent) => void;
 }
 
 const ContactItem = ({ contact, onRemove, compact = false, onClick }: ContactItemProps) => {
-  const handleClick = (e: React.MouseEvent) => {
+  const _handleClick = (_e: React.MouseEvent) => {
     if (onClick) {
-      onClick(e);
+      onClick(_e);
     } else {
-      e.stopPropagation();
+      _e.stopPropagation();
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      e.stopPropagation();
+  const _handleKeyDown = (_e: React.KeyboardEvent) => {
+    if (_e.key === 'Enter' || _e.key === ' ') {
+      _e.preventDefault();
+      _e.stopPropagation();
       if (onRemove) {
         onRemove(contact.id);
       }
@@ -34,7 +34,7 @@ const ContactItem = ({ contact, onRemove, compact = false, onClick }: ContactIte
     return (
       <div
         className="flex items-center bg-base-100 rounded-full px-3 py-1.5 shadow-sm border border-base-300"
-        onClick={handleClick}
+        onClick={_handleClick}
       >
         <User className="h-4 w-4 text-primary mr-2" />
         <div className="flex flex-col">
@@ -42,7 +42,7 @@ const ContactItem = ({ contact, onRemove, compact = false, onClick }: ContactIte
           <a
             href={`tel:${contact.phone}`}
             className="text-xs text-primary flex items-center hover:underline focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-sm"
-            onClick={(e) => e.stopPropagation()}
+            onClick={_e => _e.stopPropagation()}
             tabIndex={0}
             aria-label={`Call ${contact.name} at ${contact.phone}`}
           >
@@ -58,7 +58,7 @@ const ContactItem = ({ contact, onRemove, compact = false, onClick }: ContactIte
   return (
     <div
       className="flex items-center justify-between bg-base-100 p-2 rounded-md"
-      onClick={handleClick}
+      onClick={_handleClick}
     >
       <div className="flex items-center">
         <User className="h-5 w-5 text-primary mr-3" />
@@ -74,11 +74,11 @@ const ContactItem = ({ contact, onRemove, compact = false, onClick }: ContactIte
         <button
           type="button"
           className="btn btn-ghost btn-sm btn-circle"
-          onClick={(e) => {
-            e.stopPropagation();
+          onClick={_e => {
+            _e.stopPropagation();
             onRemove(contact.id);
           }}
-          onKeyDown={handleKeyDown}
+          onKeyDown={_handleKeyDown}
           aria-label={`Remove contact ${contact.name}`}
           tabIndex={0}
         >

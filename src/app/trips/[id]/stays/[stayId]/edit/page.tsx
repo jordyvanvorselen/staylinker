@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Calendar, MapPin, Save, Trash2, Plus, X, Phone, User } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Save, Trash2, Plus } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Contact } from '../../../../../../types';
@@ -587,11 +587,7 @@ export default function EditStayPage() {
                     <h4 className="text-sm font-medium mb-2">Added Contacts:</h4>
                     <div className="space-y-2">
                       {formData.contacts.map(contact => (
-                        <ContactItem
-                          key={contact.id}
-                          contact={contact}
-                          onRemove={removeContact}
-                        />
+                        <ContactItem key={contact.id} contact={contact} onRemove={removeContact} />
                       ))}
                     </div>
                   </div>
