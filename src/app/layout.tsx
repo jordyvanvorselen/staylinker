@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import ThemeProvider from '../components/ThemeProvider';
 import Header from '../components/Header';
@@ -15,11 +15,19 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+export const viewport: Viewport = {
+  themeColor: '#4f46e5',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+};
+
 export const metadata: Metadata = {
   title: 'StayLinker',
   description: 'Link and manage your stays efficiently',
   manifest: '/manifest.json',
-  themeColor: '#4f46e5',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -57,13 +65,6 @@ export const metadata: Metadata = {
       },
     ],
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover',
-  },
   formatDetection: {
     telephone: false,
   },
@@ -84,11 +85,6 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#4f46e5" />
         <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="theme-color" content="#4f46e5" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover"
-        />
         <meta name="apple-touch-fullscreen" content="yes" />
 
         <link rel="apple-touch-icon" href="/ios/192.png" />
